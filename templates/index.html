@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>GPT-SAN PRO</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #111;
+            color: #eee;
+            padding: 2em;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+            width: 100%;
+        }
+        button {
+            background-color: #00d084;
+            color: black;
+            font-weight: bold;
+            border: none;
+        }
+        .respuesta {
+            margin-top: 20px;
+            padding: 1em;
+            background: #222;
+            border-left: 4px solid #00d084;
+        }
+    </style>
+</head>
+<body>
+    <h1>GPT-SAN PRO 🔮</h1>
+    <form action="/comando" method="post">
+        <input name="comando" placeholder="Ej: dame un parley, modo experto ON, valor esperado">
+        <button type="submit">Enviar Comando</button>
+    </form>
+
+    {% if request.method == 'POST' %}
+    <div class="respuesta">
+        {{ request.form['comando'] }}
+        <hr>
+        {{ response|safe }}
+    </div>
+    {% endif %}
+</body>
+</html>
