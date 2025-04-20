@@ -40,6 +40,30 @@ def index():
             ✔️ Probabilidad de que gane el LOCAL: {resultado['probabilidad_gana_local'] * 100}%<br>
             ❌ Probabilidad de que NO gane el LOCAL: {resultado['probabilidad_no_gana_local'] * 100}%
             """
+        elif "racha de bayern" in texto:
+            from utils.rachas import obtener_racha
+            racha = obtener_racha(team_id=157)
+
+            if "error" in racha:
+                respuesta = f"❌ Error al obtener la racha: {racha['error']}"
+            else:
+                respuesta = "📊 <b>Últimos 5 partidos del Bayern:</b><br>"
+                for linea in racha["racha"]:
+                    respuesta += f"• {linea}<br>"
+                respuesta += f"<br>⚽ Goles marcados: {racha['goles_marcados']}<br>🛡️ Goles recibidos: {racha['goles_recibidos']}<br>📈 {racha['resumen']}"
+    
+        elif "racha de bayern" in texto:
+            from utils.rachas import obtener_racha
+            racha = obtener_racha(team_id=157)
+
+            if "error" in racha:
+                respuesta = f"❌ Error al obtener la racha: {racha['error']}"
+            else:
+                respuesta = "📊 <b>Últimos 5 partidos del Bayern:</b><br>"
+                for linea in racha["racha"]:
+                    respuesta += f"• {linea}<br>"
+                respuesta += f"<br>⚽ Goles marcados: {racha['goles_marcados']}<br>🛡️ Goles recibidos: {racha['goles_recibidos']}"
+    
         
         elif "lesiones en bayern" in texto:
             from utils.lesiones import obtener_lesiones
