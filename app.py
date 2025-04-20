@@ -40,4 +40,6 @@ def comando():
         return "Comando no reconocido. Intenta con: 'dame un parley', 'valor', 'modo experto ON'."
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Corrección para Render: puerto dinámico y host 0.0.0.0
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
