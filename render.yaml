@@ -2,14 +2,16 @@ services:
   - type: web
     name: gpt-sanpro
     env: python
-    buildCommand: ""
+    region: oregon
+    buildCommand: "pip install -r requirements.txt"
     startCommand: "python app.py"
+    plan: free
     envVars:
       - key: API_FOOTBALL_KEY
         value: cef9115ecad4dcadf30573ca8c3d3abe
       - key: ODDS_API_KEY
         value: 7d2eec9ef8msh6a6d75b36c041b6p1b8795jsn062d8f4d1efe
       - key: WEATHER_API_KEY
-        value: pon_aqui_tu_clave
+        value: TEST
       - key: NEWS_API_KEY
-        value: pon_aqui_tu_clave
+        value: TEST
