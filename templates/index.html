@@ -32,15 +32,13 @@
 </head>
 <body>
     <h1>GPT-SAN PRO 🔮</h1>
-    <form action="/comando" method="post">
-        <input name="comando" placeholder="Ej: dame un parley, modo experto ON, valor esperado">
+    <form action="/" method="post">
+        <input name="comando" placeholder="Ej: modo experto ON, predecir">
         <button type="submit">Enviar Comando</button>
     </form>
 
-    {% if request.method == 'POST' %}
+    {% if response %}
     <div class="respuesta">
-        {{ request.form['comando'] }}
-        <hr>
         {{ response|safe }}
     </div>
     {% endif %}

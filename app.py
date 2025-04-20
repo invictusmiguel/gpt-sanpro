@@ -1,53 +1,76 @@
-from flask import Flask, render_template, request, send_from_directory
-from dotenv import load_dotenv
-import os
-
-# Cargar claves del archivo .env
-load_dotenv()
-
-# Importar módulos utilitarios
-from utils.api_football import obtener_partidos_hoy
-from utils.logic import generar_parley, calcular_valor
-from utils.expert_mode import simular_apuestas
+from flask import Flask, request, render_template, send_from_directory
+from utils import probabilidades
+from predictor import predecir_resultado
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    respuesta = ""
 
-@app.route('/comando', methods=['POST'])
-def comando():
-    texto = request.form['comando'].lower()
+    if request.method == 'POST':
+        texto = request.form.get('comando', '').lower()
 
-    if "parley" in texto:
-        partidos = obtener_partidos_hoy()
-        return generar_parley(partidos)
+        if "modo experto on" in texto:
+            goles_local = 1.8
+            goles_visitante = 1.2
+            cuota = 2.1
+            prob_real = 0.55
 
-    elif "valor" in texto:
-        return calcular_valor()
+            poisson = probabilidades.calcular_poisson(goles_local, goles_visitante)
+            simulacion = probabilidades.simular_monte_carlo(prob_real, 1 - prob_real)
+            kelly = probabilidades.generar_kelly(prob_real, cuota)
+            ve = probabilidades.valor_esperado(prob_real, cuota)
 
-    elif "modo experto" in texto and "on" in texto:
-        return "🔓 Modo Experto Activado: Simulaciones avanzadas activadas"
+            respuesta = f"""
+            🔓 <b>Modo Experto Activado</b><br>
+            ✔️ Poisson {goles_local}-{goles_visitante}<br>
+            ✔️ Monte Carlo: {simulacion}<br>
+            ✔️ Kelly: {kelly * 100}%<br>
+            ✔️ Valor Esperado: {ve}
+            """
 
-    elif "modo experto" in texto and "off" in texto:
-        return "🔒 Modo Experto Desactivado"
+        elif "predecir" in texto:
+            resultado = predecir_resultado(2, 1)
+            respuesta = f"""
+            🤖 <b>Predicción usando modelo:</b><br>
+            ✔️ Probabilidad de que gane el LOCAL: {resultado['probabilidad_gana_local'] * 100}%<br>
+            ❌ Probabilidad de que NO gane el LOCAL: {resultado['probabilidad_no_gana_local'] * 100}%
+            """
 
-    elif "simula" in texto or "10.000" in texto:
-        return simular_apuestas()
+        else:
+            respuesta = "❌ Comando no reconocido"
 
-    else:
-        return "Comando no reconocido. Intenta con: 'dame un parley', 'valor', 'modo experto ON'."
+    return render_template('index.html', response=respuesta)
 
-# ✅ PASO C: Servir archivos del plugin para ChatGPT
+# ----------- API para plugin GPT-SANPRO -----------
+
+@app.route('/prediccion', methods=['GET'])
+def prediccion_api():
+    try:
+        gl = float(request.args.get('goles_local', 0))
+        gv = float(request.args.get('goles_visita', 0))
+        resultado = predecir_resultado(gl, gv)
+        return {
+            "probabilidad_local": resultado['probabilidad_gana_local'],
+            "probabilidad_no_local": resultado['probabilidad_no_gana_local']
+        }
+    except Exception as e:
+        return {"error": str(e)}, 400
+
 @app.route('/.well-known/ai-plugin.json')
-def serve_ai_plugin():
+def serve_manifest():
     return send_from_directory('.well-known', 'ai-plugin.json', mimetype='application/json')
 
 @app.route('/openapi.yaml')
-def serve_openapi_spec():
+def serve_openapi():
     return send_from_directory('.', 'openapi.yaml', mimetype='text/yaml')
 
+@app.route('/static/logo.png')
+def serve_logo():
+    return send_from_directory('static', 'logo.png', mimetype='image/png')
+
+# --------------------------------------------------
+
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(debug=True)

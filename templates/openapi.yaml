@@ -1,0 +1,26 @@
+openapi: 3.0.1
+info:
+  title: GPT-SANPRO Plugin API
+  description: API para predicción, simulación y análisis de apuestas deportivas.
+  version: "1.0.0"
+servers:
+  - url: https://gpt-sanpro-clean.onrender.com
+
+paths:
+  /prediccion:
+    get:
+      summary: Predicción de resultado
+      parameters:
+        - name: goles_local
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: goles_visita
+          in: query
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Resultado de la predicción
