@@ -1,6 +1,9 @@
 from flask import Flask, request, render_template, send_from_directory 
 from utils import probabilidades
 from predictor import predecir_resultado
+from dotenv import load_dotenv
+load_dotenv()
+
 
 app = Flask(__name__)
 
@@ -37,6 +40,32 @@ def index():
             ✔️ Probabilidad de que gane el LOCAL: {resultado['probabilidad_gana_local'] * 100}%<br>
             ❌ Probabilidad de que NO gane el LOCAL: {resultado['probabilidad_no_gana_local'] * 100}%
             """
+        
+        elif "lesiones en bayern" in texto:
+            from utils.lesiones import obtener_lesiones
+            jugadores_lesionados = obtener_lesiones(team_id=157)  # Bayern
+
+            respuesta = "🩼 <b>Jugadores lesionados en Bayern:</b><br>"
+            for j in jugadores_lesionados:
+                respuesta += f"• {j}<br>"
+
+
+        elif "clima en" in texto:
+            from utils.clima import obtener_clima
+            lat = 4.6097
+            lon = -74.0817
+            clima = obtener_clima(lat, lon)
+
+            if "error" in clima:
+                respuesta = f"❌ Error obteniendo el clima: {clima['error']}"
+            else:
+                respuesta = f"""
+                ☁️ <b>Clima en Bogotá</b><br>
+                🌡️ Temp: {clima['temperatura']} °C<br>
+                💧 Humedad: {clima['humedad']}%<br>
+                🌬️ Viento: {clima['viento']} m/s<br>
+                🌥️ Condición: {clima['condicion']}
+                """
 
         else:
             respuesta = "❌ Comando no reconocido"
