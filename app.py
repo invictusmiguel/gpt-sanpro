@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, send_from_directory
+from flask import Flask, request, render_template, send_from_directory 
 from utils import probabilidades
 from predictor import predecir_resultado
 
@@ -73,4 +73,6 @@ def serve_logo():
 # --------------------------------------------------
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
