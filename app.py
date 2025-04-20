@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory
 from dotenv import load_dotenv
 import os
 
@@ -39,7 +39,15 @@ def comando():
     else:
         return "Comando no reconocido. Intenta con: 'dame un parley', 'valor', 'modo experto ON'."
 
+# ✅ PASO C: Servir archivos del plugin para ChatGPT
+@app.route('/.well-known/ai-plugin.json')
+def serve_ai_plugin():
+    return send_from_directory('.well-known', 'ai-plugin.json', mimetype='application/json')
+
+@app.route('/openapi.yaml')
+def serve_openapi_spec():
+    return send_from_directory('.', 'openapi.yaml', mimetype='text/yaml')
+
 if __name__ == '__main__':
-    # Corrección para Render: puerto dinámico y host 0.0.0.0
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
