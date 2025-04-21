@@ -1,0 +1,43 @@
+{
+  "saldo": 100.44,
+  "historial": [
+    {
+      "fixture_id": 1044645,
+      "probabilidad": 0.6,
+      "cuota": 2.1,
+      "apostado": 1.2,
+      "resultado": "ganada",
+      "ganancia": 1.32,
+      "nuevo_saldo": 101.32
+    },
+    {
+      "fixture_id": 1044645,
+      "probabilidad": 0.6,
+      "cuota": 2.1,
+      "apostado": 1.22,
+      "resultado": "perdida",
+      "ganancia": -1.22,
+      "nuevo_saldo": 100.1
+    },
+    {
+      "fecha": "2025-04-20T19:34:47.826875",
+      "fixture_id": 1044645,
+      "probabilidad": 0.65,
+      "cuota": 2.3,
+      "apostado": 1.2,
+      "resultado": "ganada",
+      "ganancia": 1.56,
+      "nuevo_saldo": 101.66
+    },
+    {
+      "fecha": "2025-04-20T19:34:58.387968",
+      "fixture_id": 1044645,
+      "probabilidad": 0.65,
+      "cuota": 2.3,
+      "apostado": 1.22,
+      "resultado": "perdida",
+      "ganancia": -1.22,
+      "nuevo_saldo": 100.44
+    }
+  ]
+}

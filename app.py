@@ -40,10 +40,120 @@ def index():
             ✔️ Probabilidad de que gane el LOCAL: {resultado['probabilidad_gana_local'] * 100}%<br>
             ❌ Probabilidad de que NO gane el LOCAL: {resultado['probabilidad_no_gana_local'] * 100}%
             """
-        elif "racha de bayern" in texto:
+    if "apostar ahora" in texto or "apostar en" in texto:
+        from utils.apis.cuotas import obtener_cuotas
+        from utils.apis.fixtures import buscar_fixture_con_cuotas
+        from banca import registrar_apuesta
+        from predictor import predecir_resultado
+
+        try:
+            if "apostar ahora" in texto:
+                partido = buscar_fixture_con_cuotas()
+                if "error" in partido:
+                    respuesta = f"❌ No se encontraron partidos con cuotas: {partido['error']}"
+                else:
+                    fixture_id = partido["fixture_id"]
+                    equipo_local = partido["local"]
+                    equipo_visitante = partido["visitante"]
+            else:
+                fixture_id = int(texto.split("apostar en")[1].strip())
+                equipo_local = "Equipo Local"
+                equipo_visitante = "Equipo Visitante"
+
+                cuota_info = obtener_cuotas(fixture_id)
+                if "error" in cuota_info:
+                    respuesta = f"❌ Error al obtener cuotas: {cuota_info['error']}"
+                else:
+                    goles_local = 1.6
+                    goles_visita = 1.2
+                    resultado = predecir_resultado(goles_local, goles_visita)
+                    probabilidad = resultado["probabilidad_gana_local"]
+                    cuota = cuota_info["local"]
+
+                    # ❗ Esto es temporal. Luego se reemplaza con el resultado real del fixture
+        except Exception as e:
+            respuesta = f"❌ Error al procesar la solicitud: {str(e)}"
+        from utils.apis.resultados import resultado_real
+        resultado = resultado_real(fixture_id)
+        if "error" in resultado:
+            acertado = probabilidad > 0.5  # fallback
+        else:
+            acertado = resultado["acertado"]
+           
+            banca_res = registrar_apuesta(fixture_id, probabilidad, cuota, acertado)
+
+            respuesta = f"""
+            🧠 <b>Apuesta Inteligente</b><br>
+            ⚔️ {equipo_local} vs {equipo_visitante}<br>
+            🎯 Predicción: {round(probabilidad * 100, 2)}%<br>
+            💸 Cuota usada: {cuota}<br>
+            🧾 Resultado: {"✔️ GANÓ" if acertado else "❌ PERDIÓ"}<br>
+            💰 {banca_res}
+            """
+        # Removed misplaced except block
+
+    elif "estadisticas de" in texto:
+        from utils.apis.estadisticas import obtener_estadisticas
+        try:
+            partes = texto.replace("estadisticas de", "").strip().split("equipo")
+            fixture_id = int(partes[0].strip())
+            team_id = int(partes[1].strip())
+            stats = obtener_estadisticas(fixture_id, team_id)
+
+            if isinstance(stats, dict) and "error" in stats:
+                respuesta = f"❌ Error: {stats['error']}"
+            else:
+                respuesta = f"📊 <b>Estadísticas del equipo {team_id} en el partido {fixture_id}:</b><br>"
+                for linea in stats:
+                    respuesta += f"• {linea}<br>"
+
+        except Exception as e:
+            respuesta = f"❌ Error procesando IDs: {str(e)}"
+
+    elif "cuotas en" in texto:
+            from utils.apis.cuotas import obtener_cuotas
+            try:
+                fixture_id = int(texto.split("cuotas en")[1].strip())
+                cuotas = obtener_cuotas(fixture_id)
+
+                if "error" in cuotas:
+                    respuesta = f"❌ Error: {cuotas['error']}"
+                else:
+                    respuesta = f"""
+                    💰 <b>Cuotas para el partido {fixture_id}</b><br>
+                    🏦 Casa: {cuotas['casa']}<br>
+                    🟢 Gana local: {cuotas['local']}<br>
+                    ⚪ Empate: {cuotas['empate']}<br>
+                    🔴 Gana visitante: {cuotas['visitante']}
+                    """
+            except Exception as e:
+                respuesta = f"❌ Error procesando el fixture ID: {str(e)}"
+
+    elif "eventos en" in texto:
+            from utils.apis.eventos import obtener_eventos
+            try:
+                fixture_id = int(texto.split("eventos en")[1].strip())
+                eventos = obtener_eventos(fixture_id)
+    
+                if "error" in eventos:
+                    respuesta = f"❌ Error: {eventos['error']}"
+                else:
+                    respuesta = f"📺 <b>Eventos del partido {fixture_id}:</b><br>"
+                    for e in eventos["response"]:
+                        tipo = e["type"]
+                        detalle = e["detail"]
+                        jugador = e["player"]["name"]
+                        equipo = e["team"]["name"]
+                        minuto = e["time"]["elapsed"]
+                        respuesta += f"⏱️ {minuto}’ - {jugador} ({equipo}) → {tipo} ({detalle})<br>"
+    
+            except Exception as e:
+                respuesta = f"❌ Error procesando el fixture ID: {str(e)}"
+
+    elif "racha de bayern" in texto:
             from utils.rachas import obtener_racha
             racha = obtener_racha(team_id=157)
-
+    
             if "error" in racha:
                 respuesta = f"❌ Error al obtener la racha: {racha['error']}"
             else:
@@ -51,35 +161,20 @@ def index():
                 for linea in racha["racha"]:
                     respuesta += f"• {linea}<br>"
                 respuesta += f"<br>⚽ Goles marcados: {racha['goles_marcados']}<br>🛡️ Goles recibidos: {racha['goles_recibidos']}<br>📈 {racha['resumen']}"
-    
-        elif "racha de bayern" in texto:
-            from utils.rachas import obtener_racha
-            racha = obtener_racha(team_id=157)
 
-            if "error" in racha:
-                respuesta = f"❌ Error al obtener la racha: {racha['error']}"
-            else:
-                respuesta = "📊 <b>Últimos 5 partidos del Bayern:</b><br>"
-                for linea in racha["racha"]:
-                    respuesta += f"• {linea}<br>"
-                respuesta += f"<br>⚽ Goles marcados: {racha['goles_marcados']}<br>🛡️ Goles recibidos: {racha['goles_recibidos']}"
-    
-        
-        elif "lesiones en bayern" in texto:
+    elif "lesiones en bayern" in texto:
             from utils.lesiones import obtener_lesiones
-            jugadores_lesionados = obtener_lesiones(team_id=157)  # Bayern
-
+            jugadores_lesionados = obtener_lesiones(team_id=157)
             respuesta = "🩼 <b>Jugadores lesionados en Bayern:</b><br>"
             for j in jugadores_lesionados:
                 respuesta += f"• {j}<br>"
-
-
-        elif "clima en" in texto:
+    
+    elif "clima en" in texto:
             from utils.clima import obtener_clima
             lat = 4.6097
             lon = -74.0817
             clima = obtener_clima(lat, lon)
-
+    
             if "error" in clima:
                 respuesta = f"❌ Error obteniendo el clima: {clima['error']}"
             else:
@@ -91,7 +186,7 @@ def index():
                 🌥️ Condición: {clima['condicion']}
                 """
 
-        else:
+    else:
             respuesta = "❌ Comando no reconocido"
 
     return render_template('index.html', response=respuesta)
