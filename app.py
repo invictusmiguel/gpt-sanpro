@@ -1,8 +1,11 @@
-from flask import Flask, request, render_template, send_from_directory 
+from flask import Flask, request, render_template, send_from_directory, jsonify 
 from utils import probabilidades
 from predictor import predecir_resultado
 from dotenv import load_dotenv
 load_dotenv()
+from utils.baseball_predictor import predecir_super_altas_bajas
+from datetime import datetime
+import hashlib
 
 
 app = Flask(__name__)
@@ -190,6 +193,33 @@ def index():
             respuesta = "❌ Comando no reconocido"
 
     return render_template('index.html', response=respuesta)
+
+@app.route("/super_altas_bajas", methods=["GET"])
+def prediccion_over_under():
+    equipo1 = request.args.get("equipo1")
+    equipo2 = request.args.get("equipo2")
+
+    partidos = [
+        {"carreras_local": 6, "carreras_visita": 4},
+        {"carreras_local": 5, "carreras_visita": 3},
+        {"carreras_local": 8, "carreras_visita": 2}
+    ]
+
+    resultado = predecir_super_altas_bajas(partidos)
+
+    now = datetime.utcnow().isoformat()
+    base = f"{equipo1}-{equipo2}-{resultado['over_under']}-{now}"
+    codigo_sampro = hashlib.sha256(base.encode()).hexdigest()[:12].upper()
+
+    resultado.update({
+        "equipo1": equipo1,
+        "equipo2": equipo2,
+        "fecha": now,
+        "codigo_sampro": codigo_sampro
+    })
+
+    return jsonify(resultado)
+
 
 # ----------- API para plugin GPT-SANPRO -----------
 
