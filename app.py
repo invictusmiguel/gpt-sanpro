@@ -10,6 +10,36 @@ import hashlib
 
 app = Flask(__name__)
 
+@app.route("/super_altas_bajas", methods=["GET"])
+def prediccion_over_under():
+    equipo1 = request.args.get("equipo1")
+    equipo2 = request.args.get("equipo2")
+
+    # Ejemplo temporal — luego se conecta a la base o API de enfrentamientos reales
+    partidos = [
+        {"carreras_local": 6, "carreras_visita": 4},
+        {"carreras_local": 5, "carreras_visita": 3},
+        {"carreras_local": 8, "carreras_visita": 2}
+    ]
+
+    from utils.baseball_predictor import predecir_super_altas_bajas
+    resultado = predecir_super_altas_bajas(partidos)
+
+    # 🔐 Código de verificación único SAMPRO
+    now = datetime.utcnow().isoformat()
+    base = f"{equipo1}-{equipo2}-{resultado['over_under']}-{now}"
+    codigo_sampro = hashlib.sha256(base.encode()).hexdigest()[:12].upper()
+
+    resultado.update({
+        "equipo1": equipo1,
+        "equipo2": equipo2,
+        "fecha": now,
+        "codigo_sampro": codigo_sampro
+    })
+
+    return jsonify(resultado)
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     respuesta = ""
