@@ -1,27 +1,36 @@
 import telebot
-import subprocess
+import requests
 
-# 🔐 Token de tu bot
-BOT_TOKEN = "8175598995:AAH1NoEVhzfKOa4LvOEqcloip8BmY5MJ0Dc"
-bot = telebot.TeleBot(BOT_TOKEN)
+TOKEN = "AQUI_TU_TOKEN_DEL_BOT"
+bot = telebot.TeleBot(TOKEN)
 
-# 🟢 Comando inicial
-@bot.message_handler(commands=["start", "ayuda"])
-def bienvenida(mensaje):
-    bot.reply_to(mensaje, "👋 Hola jefe, soy tu bot SAMPRO.\nEscribe /actualizar para ejecutar el scraping de Bet365.")
-
-# 🔁 Comando para actualizar cuotas
-@bot.message_handler(commands=["actualizar"])
-def ejecutar_scraping(mensaje):
-    bot.reply_to(mensaje, "⚙️ Ejecutando scraping de Bet365...")
+@bot.message_handler(commands=['start', 'parley'])
+def enviar_parley(message):
+    url = "http://localhost:5000/parley_seguro_vida_json"
     try:
-        resultado = subprocess.run(["python", "utils/apis/bot_bet365.py"], capture_output=True, text=True)
-        if resultado.returncode == 0:
-            bot.send_message(mensaje.chat.id, "✅ Archivo actualizado correctamente.")
-        else:
-            bot.send_message(mensaje.chat.id, f"❌ Error:\n{resultado.stderr}")
-    except Exception as e:
-        bot.send_message(mensaje.chat.id, f"❌ Fallo al ejecutar: {str(e)}")
+        res = requests.get(url)
+        datos = res.json()
 
-# 🛰️ Activa el bot
+        if "error" in datos:
+            bot.reply_to(message, f"⚠️ {datos['error']}")
+            return
+
+        parlays = datos.get("parleys", [])
+        for p in parlays:
+            texto = f"""
+<b>{p['nombre']}</b>
+🎯 Cuota Total: {p['cuota_total']}
+📈 Probabilidad: {round(p['probabilidad']*100, 2)}%
+💰 Inversión: {p['inversion']} soles
+🧮 VE: {p['valor_esperado']}
+🔐 Código SAMPRO: {p['codigo_sampro']}
+"""
+            for pick in p['picks']:
+                texto += f"• {pick['partido']} — {pick['mercado']} — Cuota: {pick['cuota']} — Confianza: {pick['confianza']}%\n"
+
+            bot.send_message(message.chat.id, texto, parse_mode="HTML")
+    except Exception as e:
+        bot.reply_to(message, f"❌ Error: {str(e)}")
+
+print("🤖 Bot activo. Esperando comandos /start o /parley")
 bot.polling()

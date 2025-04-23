@@ -1,18 +1,17 @@
 {
-    "schema_version": "v1",
-    "name_for_human": "GPT-SAN PRO",
-    "name_for_model": "gpt_sanpro",
-    "description_for_human": "Genera parlays, calcula valor esperado y simula apuestas deportivas.",
-    "description_for_model": "Plugin de apuestas. Usa /comando con texto como 'dame un parley' o 'modo experto ON'.",
-    "auth": {
-      "type": "none"
-    },
-    "api": {
-      "type": "openapi",
-      "url": "https://gpt-sanpro-clean.onrender.com/openapi.yaml"
-    },
-    "logo_url": "https://gpt-sanpro-clean.onrender.com/static/logo.png",
-    "contact_email": "todasmisiamiguel@gmail.com",
-    "legal_info_url": "https://gpt-sanpro-clean.onrender.com/legal"
-  }
-  
+  "schema_version": "v1",
+  "name_for_human": "GPT-SANPRO",
+  "name_for_model": "gpt_sanpro",
+  "description_for_human": "Predicción, simulación y análisis de apuestas deportivas",
+  "description_for_model": "Provee valor esperado, ROI, parley optimizados, y simulaciones deportivas.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://gpt-sanpro-clean.onrender.com/openapi.yaml"
+  },
+  "logo_url": "https://gpt-sanpro-clean.onrender.com/static/logo.png",
+  "contact_email": "miguel@example.com",
+  "legal_info_url": "https://gpt-sanpro-clean.onrender.com/legal"
+}

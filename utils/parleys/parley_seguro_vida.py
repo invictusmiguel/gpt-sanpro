@@ -8,11 +8,13 @@ from utils.mlb.ubicaciones import MAPA_ESTADIOS
 from utils.clima import obtener_clima
 from utils.scrapers.savant_scraper import get_pitcher_savant_stats
 
+# 🧮 Función auxiliar para obtener ERA del pitcher si es un dict
 def obtener_era_pitcher(pitcher):
     if isinstance(pitcher, dict):
         return pitcher.get("era")
     return None
 
+# 🎯 Clasifica picks por confianza
 def clasificar_picks(picks):
     alta, media, baja = [], [], []
     for pick in picks:
@@ -25,24 +27,29 @@ def clasificar_picks(picks):
             baja.append(pick)
     return alta, media, baja
 
+# 🔢 Multiplica probabilidades
 def probabilidad_parley(lista_probabilidades):
     if not lista_probabilidades:
         return 0
     return round(reduce(lambda a, b: a * b, lista_probabilidades), 4)
 
+# 📈 Valor esperado
 def valor_esperado(prob, cuota):
     return round((prob * cuota) - 1, 3)
 
+# 💰 Cuota total del parley
 def calcular_cuota_total(picks):
     cuotas = [float(p.get('cuota', 0)) for p in picks if p.get('cuota')]
     if not cuotas:
         return 0
     return round(reduce(lambda a, b: a * b, cuotas), 2)
 
+# 🔐 Código de verificación SAMPRO
 def generar_codigo(picks):
     base = "-".join(p.get('partido', '') for p in picks) + datetime.now(timezone.utc).isoformat()
     return hashlib.sha256(base.encode()).hexdigest()[:10].upper()
 
+# 🚀 Generador de Parlays
 def generar_parleys_seguro_vida(picks, inversion_total=50):
     for pick in picks:
         partido = pick.get("partido", "")
@@ -51,7 +58,7 @@ def generar_parleys_seguro_vida(picks, inversion_total=50):
             if len(equipos) == 2:
                 equipo1, equipo2 = equipos[0].strip(), equipos[1].strip()
 
-                # 🧠 Historial
+                # 📊 Historial enfrentamientos
                 historial = get_historial_enfrentamientos(equipo1, equipo2)
                 if isinstance(historial, dict):
                     promedio = historial.get("promedio_carreras", 0)
@@ -60,7 +67,7 @@ def generar_parleys_seguro_vida(picks, inversion_total=50):
                     elif promedio <= 6.5:
                         pick["confianza"] -= 2
 
-                # ⚾ Pitchers (ERA)
+                # ⚾️ ERA Pitchers
                 pitchers = get_pitchers_por_partido(partido)
                 if isinstance(pitchers, dict):
                     era_local = obtener_era_pitcher(pitchers.get("pitcher_local"))
@@ -83,11 +90,11 @@ def generar_parleys_seguro_vida(picks, inversion_total=50):
                         if clima.get("temperatura", 20) < 10:
                             pick["confianza"] -= 1
 
-                # 📊 Baseball Savant (si hay URL en pick)
+                # 🧪 Baseball Savant
                 savant_url = pick.get("savant_url")
                 if savant_url:
                     stats = get_pitcher_savant_stats(savant_url)
-                    if stats:
+                    if stats and "error" not in stats:
                         xera = stats.get("xERA")
                         csw = stats.get("CSW%")
                         whiff = stats.get("Whiff%")
@@ -100,6 +107,7 @@ def generar_parleys_seguro_vida(picks, inversion_total=50):
                         if whiff and whiff > 30:
                             pick["confianza"] += 1
 
+                # 🛡️ Normalización
                 pick["confianza"] = min(max(pick["confianza"], 50), 100)
 
     alta, media, baja = clasificar_picks(picks)
@@ -127,7 +135,7 @@ def generar_parleys_seguro_vida(picks, inversion_total=50):
     prob3 = probabilidad_parley([p.get("confianza", 0) / 100 for p in parley3])
     ve3 = valor_esperado(prob3, cuota3)
 
-    # 💰 Distribución
+    # 💰 Distribución de inversión
     distribucion = [0.4, 0.3, 0.3]
     parlays.append({
         "nombre": "Máxima Selección",
