@@ -1,0 +1,25 @@
+{
+  "fecha": "2025-04-23T03:22:08.871030",
+  "partidos": [
+    {
+      "partido": "NY Yankees vs CLE Guardians",
+      "mercado": "Alta",
+      "cuota": 1.85,
+      "confianza": 92,
+      "pitcher_local": "N/D",
+      "pitcher_visitante": "N/D",
+      "savant_local": null,
+      "savant_visitante": null
+    },
+    {
+      "partido": "SD Padres vs DET Tigers",
+      "mercado": "Baja",
+      "cuota": 1.95,
+      "confianza": 88,
+      "pitcher_local": "N/D",
+      "pitcher_visitante": "N/D",
+      "savant_local": null,
+      "savant_visitante": null
+    }
+  ]
+}
