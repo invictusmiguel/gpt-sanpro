@@ -1,0 +1,8 @@
+{
+    "username": "mipriyectogol@gmail.com",
+    "password": "001AEF241ed09$",
+    "headless": false,
+    "timeout": 30,
+    "screenshots": true,
+    "max_retries": 3
+}

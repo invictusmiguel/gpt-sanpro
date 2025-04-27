@@ -1,25 +1,24 @@
 {
-  "fecha": "2025-04-23T03:22:08.871030",
   "partidos": [
     {
       "partido": "NY Yankees vs CLE Guardians",
       "mercado": "Alta",
       "cuota": 1.85,
       "confianza": 92,
-      "pitcher_local": "N/D",
-      "pitcher_visitante": "N/D",
-      "savant_local": null,
-      "savant_visitante": null
+      "pitcher_local": "Gerrit Cole",
+      "pitcher_visitante": "Shane Bieber",
+      "savant_local": "https://baseballsavant.mlb.com/player/543037",
+      "savant_visitante": "https://baseballsavant.mlb.com/player/605135"
     },
     {
-      "partido": "SD Padres vs DET Tigers",
-      "mercado": "Baja",
-      "cuota": 1.95,
+      "partido": "Red Sox vs Blue Jays",
+      "mercado": "Over 7.5",
+      "cuota": 1.70,
       "confianza": 88,
-      "pitcher_local": "N/D",
-      "pitcher_visitante": "N/D",
-      "savant_local": null,
-      "savant_visitante": null
+      "pitcher_local": "Chris Sale",
+      "pitcher_visitante": "Kevin Gausman",
+      "savant_local": "https://baseballsavant.mlb.com/player/519242",
+      "savant_visitante": "https://baseballsavant.mlb.com/player/543114"
     }
   ]
 }

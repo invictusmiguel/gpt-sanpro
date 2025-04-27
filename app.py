@@ -1,49 +1,82 @@
 from flask import Flask, request, render_template, send_from_directory, jsonify
-from utils import probabilidades
-from predictor import predecir_resultado
 from dotenv import load_dotenv
-load_dotenv()
-from utils.baseball_predictor import predecir_super_altas_bajas
-from datetime import datetime
-import hashlib
-from utils.parleys.parley_seguro_vida import generar_parleys_seguro_vida
+import os
 import json
+import hashlib
+from datetime import datetime, timezone
 
+# Carga variables de entorno
+load_dotenv()
+# 📦 Importaciones necesarias
+import joblib
+import numpy as np
+from flask import Flask, request, jsonify
+
+# 🔵 Cargar modelos y scaler entrenados
+try:
+    scaler = joblib.load('models/scaler.pkl')
+    print("✅ Scaler cargado correctamente.")
+except Exception as e:
+    print(f"❌ Error al cargar scaler: {e}")
+
+try:
+    modelo_regresion = joblib.load('models/regression_model.pkl')
+    print("✅ Modelo de regresión cargado correctamente.")
+except Exception as e:
+    print(f"❌ Error al cargar modelo de regresión: {e}")
+
+try:
+    modelo_clasificacion = joblib.load('models/classification_model.pkl')
+    print("✅ Modelo de clasificación cargado correctamente.")
+except Exception as e:
+    print(f"❌ Error al cargar modelo de clasificación: {e}")
+
+# 🔵 Inicializar Flask
 app = Flask(__name__)
 
-@app.route("/super_altas_bajas", methods=["GET"])
-def prediccion_over_under():
-    equipo1 = request.args.get("equipo1")
-    equipo2 = request.args.get("equipo2")
+# 📦 Importaciones del proyecto
+from utils import probabilidades
+from predictor import predecir_resultado
+from utils.baseball_predictor import predecir_super_altas_bajas
+from utils.parleys.parley_seguro_vida import generar_parleys_seguro_vida
 
-    # Ejemplo temporal — luego se conecta a la base o API de enfrentamientos reales
-    partidos = [
-        {"carreras_local": 6, "carreras_visita": 4},
-        {"carreras_local": 5, "carreras_visita": 3},
-        {"carreras_local": 8, "carreras_visita": 2}
-    ]
+# Inicializa Flask
+app = Flask(__name__)
 
-    resultado = predecir_super_altas_bajas(partidos)
+# -----------------------------------
+# 📦 Cargar Scaler y Modelos de Machine Learning
+# -----------------------------------
+import joblib
+import numpy as np
 
-    now = datetime.utcnow().isoformat()
-    base = f"{equipo1}-{equipo2}-{resultado['over_under']}-{now}"
-    codigo_sampro = hashlib.sha256(base.encode()).hexdigest()[:12].upper()
+# Cargar el scaler
+try:
+    scaler = joblib.load('models/scaler.pkl')
+    print("✅ Scaler cargado correctamente.")
+except Exception as e:
+    print(f"❌ Error cargando scaler.pkl: {str(e)}")
 
-    resultado.update({
-        "equipo1": equipo1,
-        "equipo2": equipo2,
-        "fecha": now,
-        "codigo_sampro": codigo_sampro
-    })
+# Cargar el modelo de regresión (diferencial de carreras)
+try:
+    modelo_regresion = joblib.load('models/modelo_regresion.pkl')
+    print("✅ Modelo de regresión cargado correctamente.")
+except Exception as e:
+    print(f"❌ Error cargando modelo_regresion.pkl: {str(e)}")
 
-    return jsonify(resultado)
+# Cargar el modelo de clasificación (probabilidad de victoria)
+try:
+    modelo_clasificacion = joblib.load('models/modelo_clasificacion.pkl')
+    print("✅ Modelo de clasificación cargado correctamente.")
+except Exception as e:
+    print(f"❌ Error cargando modelo_clasificacion.pkl: {str(e)}")
 
-@app.route('/', methods=['GET', 'POST'])
+# 🧠 Ruta principal HTML para comandos desde el navegador
+@app.route("/", methods=["GET", "POST"])
 def index():
     respuesta = ""
 
-    if request.method == 'POST':
-        texto = request.form.get('comando', '').lower()
+    if request.method == "POST":
+        texto = request.form.get("comando", "").lower()
 
         if "modo experto on" in texto:
             goles_local = 1.8
@@ -58,182 +91,128 @@ def index():
 
             respuesta = f"""
             🔓 <b>Modo Experto Activado</b><br>
-            ✔️ Poisson {goles_local}-{goles_visitante}<br>
+            ✔️ Poisson: {goles_local}-{goles_visitante}<br>
             ✔️ Monte Carlo: {simulacion}<br>
-            ✔️ Kelly: {kelly * 100}%<br>
+            ✔️ Kelly: {kelly * 100:.2f}%<br>
             ✔️ Valor Esperado: {ve}
             """
 
-        elif "predecir" in texto:
-            resultado = predecir_resultado(2, 1)
-            respuesta = f"""
-            🤖 <b>Predicción usando modelo:</b><br>
-            ✔️ Probabilidad de que gane el LOCAL: {resultado['probabilidad_gana_local'] * 100}%<br>
-            ❌ Probabilidad de que NO gane el LOCAL: {resultado['probabilidad_no_gana_local'] * 100}%
-            """
-        elif "apostar ahora" in texto or "apostar en" in texto:
-            from utils.apis.cuotas import obtener_cuotas
-            from utils.apis.fixtures import buscar_fixture_con_cuotas
-            from banca import registrar_apuesta
-            from predictor import predecir_resultado
-
-            try:
-                if "apostar ahora" in texto:
-                    partido = buscar_fixture_con_cuotas()
-                    if "error" in partido:
-                        respuesta = f"❌ No se encontraron partidos con cuotas: {partido['error']}"
-                    else:
-                        fixture_id = partido["fixture_id"]
-                        equipo_local = partido["local"]
-                        equipo_visitante = partido["visitante"]
-                else:
-                    fixture_id = int(texto.split("apostar en")[1].strip())
-                    equipo_local = "Equipo Local"
-                    equipo_visitante = "Equipo Visitante"
-
-                cuota_info = obtener_cuotas(fixture_id)
-                if "error" in cuota_info:
-                    respuesta = f"❌ Error al obtener cuotas: {cuota_info['error']}"
-                else:
-                    goles_local = 1.6
-                    goles_visita = 1.2
-                    resultado = predecir_resultado(goles_local, goles_visita)
-                    probabilidad = resultado["probabilidad_gana_local"]
-                    cuota = cuota_info["local"]
-
-                    from utils.apis.resultados import resultado_real
-                    resultado = resultado_real(fixture_id)
-                    if "error" in resultado:
-                        acertado = probabilidad > 0.5  # fallback
-                    else:
-                        acertado = resultado["acertado"]
-
-                    banca_res = registrar_apuesta(fixture_id, probabilidad, cuota, acertado)
-
-                    respuesta = f"""
-                    🧠 <b>Apuesta Inteligente</b><br>
-                    ⚔️ {equipo_local} vs {equipo_visitante}<br>
-                    🎯 Predicción: {round(probabilidad * 100, 2)}%<br>
-                    💸 Cuota usada: {cuota}<br>
-                    🧾 Resultado: {"✔️ GANÓ" if acertado else "❌ PERDIÓ"}<br>
-                    💰 {banca_res}
-                    """
-            except Exception as e:
-                respuesta = f"❌ Error al procesar la solicitud: {str(e)}"
-
-        elif "estadisticas de" in texto:
-            from utils.apis.estadisticas import obtener_estadisticas
-            try:
-                partes = texto.replace("estadisticas de", "").strip().split("equipo")
-                fixture_id = int(partes[0].strip())
-                team_id = int(partes[1].strip())
-                stats = obtener_estadisticas(fixture_id, team_id)
-
-                if isinstance(stats, dict) and "error" in stats:
-                    respuesta = f"❌ Error: {stats['error']}"
-                else:
-                    respuesta = f"📊 <b>Estadísticas del equipo {team_id} en el partido {fixture_id}:</b><br>"
-                    for linea in stats:
-                        respuesta += f"• {linea}<br>"
-
-            except Exception as e:
-                respuesta = f"❌ Error procesando IDs: {str(e)}"
-
-        elif "cuotas en" in texto:
-            from utils.apis.cuotas import obtener_cuotas
-            try:
-                fixture_id = int(texto.split("cuotas en")[1].strip())
-                cuotas = obtener_cuotas(fixture_id)
-
-                if "error" in cuotas:
-                    respuesta = f"❌ Error: {cuotas['error']}"
-                else:
-                    respuesta = f"""
-                    💰 <b>Cuotas para el partido {fixture_id}</b><br>
-                    🏦 Casa: {cuotas['casa']}<br>
-                    🟢 Gana local: {cuotas['local']}<br>
-                    ⚪ Empate: {cuotas['empate']}<br>
-                    🔴 Gana visitante: {cuotas['visitante']}
-                    """
-            except Exception as e:
-                respuesta = f"❌ Error procesando el fixture ID: {str(e)}"
-        elif "eventos en" in texto:
-            from utils.apis.eventos import obtener_eventos
-            try:
-                fixture_id = int(texto.split("eventos en")[1].strip())
-                eventos = obtener_eventos(fixture_id)
-
-                if "error" in eventos:
-                    respuesta = f"❌ Error: {eventos['error']}"
-                else:
-                    respuesta = f"📺 <b>Eventos del partido {fixture_id}:</b><br>"
-                    for e in eventos["response"]:
-                        tipo = e["type"]
-                        detalle = e["detail"]
-                        jugador = e["player"]["name"]
-                        equipo = e["team"]["name"]
-                        minuto = e["time"]["elapsed"]
-                        respuesta += f"⏱️ {minuto}’ - {jugador} ({equipo}) → {tipo} ({detalle})<br>"
-
-            except Exception as e:
-                respuesta = f"❌ Error procesando el fixture ID: {str(e)}"
-
-        elif "racha de bayern" in texto:
-            from utils.rachas import obtener_racha
-            racha = obtener_racha(team_id=157)
-
-            if "error" in racha:
-                respuesta = f"❌ Error al obtener la racha: {racha['error']}"
-            else:
-                respuesta = "📊 <b>Últimos 5 partidos del Bayern:</b><br>"
-                for linea in racha["racha"]:
-                    respuesta += f"• {linea}<br>"
-                respuesta += f"<br>⚽ Goles marcados: {racha['goles_marcados']}<br>🛡️ Goles recibidos: {racha['goles_recibidos']}<br>📈 {racha['resumen']}"
-
-        elif "lesiones en bayern" in texto:
-            from utils.lesiones import obtener_lesiones
-            jugadores_lesionados = obtener_lesiones(team_id=157)
-            respuesta = "🩼 <b>Jugadores lesionados en Bayern:</b><br>"
-            for j in jugadores_lesionados:
-                respuesta += f"• {j}<br>"
-
         elif "parley" in texto:
             try:
-                from utils.parleys.parley_seguro_vida import generar_parley_seguro
-                parley = generar_parley_seguro()
-                if "error" in parley:
-                    respuesta = f"❌ No se pudo generar el parley: {parley['error']}"
+                with open("data/cuotas_diarias.json", "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    picks = data["partidos"]
+
+                parlays = generar_parleys_seguro_vida(picks)
+
+                if isinstance(parlays, list) and "error" in parlays[0]:
+                    respuesta = f"⚠️ {parlays[0]['error']}"
                 else:
-                    respuesta = "💸 <b>Parley Seguro Vida</b><br>"
-                    for p in parley["jugadas"]:
-                        respuesta += f"• {p}<br>"
-                    respuesta += f"<br>🎯 Cuota Total: {parley['cuota_total']}<br>🧮 Valor Esperado: {parley['valor_esperado']}<br>💰 ROI: {parley['roi']}%"
+                    respuesta = "<h2>💼 Estrategia Seguro de Vida (SAMPRO)</h2>"
+                    for parley in parlays:
+                        respuesta += f"<h3>🎯 {parley['nombre']}</h3>"
+                        respuesta += f"<b>Cuota Total:</b> {parley['cuota_total']}<br>"
+                        respuesta += f"<b>Probabilidad:</b> {round(parley['probabilidad'] * 100, 2)}%<br>"
+                        respuesta += f"<b>Valor Esperado:</b> {parley['valor_esperado']}<br>"
+                        respuesta += f"<b>Inversión:</b> {parley['inversion']} soles<br>"
+                        respuesta += f"<b>Código SAMPRO:</b> {parley['codigo_sampro']}<br><ul>"
+                        for pick in parley["picks"]:
+                            respuesta += f"<li>{pick['partido']} — {pick['mercado']} — Cuota: {pick['cuota']} — Confianza: {pick['confianza']}%</li>"
+                        respuesta += "</ul><hr>"
+
             except Exception as e:
                 respuesta = f"❌ Error generando parley: {str(e)}"
-
-        elif "clima en" in texto:
-            from utils.clima import obtener_clima
-            lat = 4.6097
-            lon = -74.0817
-            clima = obtener_clima(lat, lon)
-
-            if "error" in clima:
-                respuesta = f"❌ Error obteniendo el clima: {clima['error']}"
-            else:
-                respuesta = f"""
-                ☁️ <b>Clima en Bogotá</b><br>
-                🌡️ Temp: {clima['temperatura']} °C<br>
-                💧 Humedad: {clima['humedad']}%<br>
-                🌬️ Viento: {clima['viento']} m/s<br>
-                🌥️ Condición: {clima['condicion']}
-                """
 
         else:
             respuesta = "❌ Comando no reconocido"
 
-    return render_template('index.html', response=respuesta)
+    return render_template("index.html", response=respuesta)
+# --------------------------------------------------
+# 📊 Endpoint para predicción de over/under
+# --------------------------------------------------
 
-# ----------- API para plugin GPT-SANPRO -----------
+@app.route("/super_altas_bajas", methods=["GET"])
+def prediccion_over_under():
+    equipo1 = request.args.get("equipo1")
+    equipo2 = request.args.get("equipo2")
+
+    # 🔄 Simulación de partidos históricos
+    partidos = [
+        {"carreras_local": 6, "carreras_visita": 4},
+        {"carreras_local": 5, "carreras_visita": 3},
+        {"carreras_local": 8, "carreras_visita": 2}
+    ]
+
+    resultado = predecir_super_altas_bajas(partidos)
+
+    now = datetime.now(timezone.utc).isoformat()
+    base = f"{equipo1}-{equipo2}-{resultado['over_under']}-{now}"
+    codigo_sampro = hashlib.sha256(base.encode()).hexdigest()[:12].upper()
+
+    resultado.update({
+        "equipo1": equipo1,
+        "equipo2": equipo2,
+        "fecha": now,
+        "codigo_sampro": codigo_sampro
+    })
+
+    return jsonify(resultado)
+# -----------------------------------
+# 🎯 Endpoint de Predicción Oficial /predict
+# -----------------------------------
+# 🎯 Endpoint de Predicción Oficial /predict (Mejorado con validaciones)
+# 🔵 Endpoint para hacer predicciones
+@app.route('/predict', methods=['POST'])
+def predict():
+    try:
+        data = request.get_json()
+
+        # Validar campos obligatorios
+        required_fields = ['obp_diff', 'slg_diff', 'woba_diff', 'era_diff', 'fip_diff']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({'error': f'Falta el campo obligatorio: {field}'}), 400
+
+        # Crear el vector de entrada
+        input_data = np.array([
+            data['obp_diff'],
+            data['slg_diff'],
+            data['woba_diff'],
+            data['era_diff'],
+            data['fip_diff']
+        ]).reshape(1, -1)
+
+        # Como nuestros modelos esperan 10 features (local y visitante por separado),
+        # duplicamos los diferenciales para completar
+        input_data_full = np.hstack((input_data, input_data))  # Ahora son 10 columnas
+
+        # Escalar los datos
+        input_scaled = scaler.transform(input_data_full)
+
+        # Hacer predicciones
+        diferencial_predicho = modelo_regresion.predict(input_scaled)[0]
+        probas = modelo_clasificacion.predict_proba(input_scaled)[0]
+        prob_local = round(float(probas[1]), 2)
+        prob_visitante = round(float(probas[0]), 2)
+        equipo_ganador = "local" if prob_local > prob_visitante else "visitante"
+
+        # Devolver respuesta
+        return jsonify({
+            'diferencial_carreras_estimado': round(float(diferencial_predicho), 2),
+            'equipo_ganador_probable': equipo_ganador,
+            'probabilidad_ganador_local': prob_local,
+            'probabilidad_ganador_visitante': prob_visitante
+        })
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+# --------------------------------------------------
+# 🧠 Endpoint para predicción de probabilidades básicas
+# --------------------------------------------------
 
 @app.route('/prediccion', methods=['GET'])
 def prediccion_api():
@@ -248,6 +227,10 @@ def prediccion_api():
     except Exception as e:
         return {"error": str(e)}, 400
 
+# --------------------------------------------------
+# 🌐 Plugins de manifest y logo
+# --------------------------------------------------
+
 @app.route('/.well-known/ai-plugin.json')
 def serve_manifest():
     return send_from_directory('.well-known', 'ai-plugin.json', mimetype='application/json')
@@ -259,16 +242,12 @@ def serve_openapi():
 @app.route('/static/logo.png')
 def serve_logo():
     return send_from_directory('static', 'logo.png', mimetype='image/png')
-
 # --------------------------------------------------
-
-from utils.parleys.parley_seguro_vida import generar_parleys_seguro_vida
-import json
+# 💼 Endpoint para Parley Seguro de Vida (HTML)
+# --------------------------------------------------
 
 @app.route("/parley_seguro_vida", methods=["GET"])
 def parley_seguro_vida():
-    from utils.parleys.parley_seguro_vida import generar_parleys_seguro_vida
-
     try:
         with open("data/cuotas_diarias.json", "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -297,11 +276,12 @@ def parley_seguro_vida():
 
     return respuesta
 
+# --------------------------------------------------
+# 🧾 Versión JSON del endpoint Parley Seguro de Vida
+# --------------------------------------------------
+
 @app.route("/parley_seguro_vida_json", methods=["GET"])
 def parley_seguro_vida_json():
-    from utils.parleys.parley_seguro_vida import generar_parleys_seguro_vida
-    import json
-
     try:
         with open("data/cuotas_diarias.json", "r", encoding="utf-8") as f:
             datos = json.load(f)
@@ -316,6 +296,9 @@ def parley_seguro_vida_json():
 
     return {"parleys": parlays}, 200
 
+# --------------------------------------------------
+# 🟢 Iniciar servidor Flask
+# --------------------------------------------------
 
 if __name__ == '__main__':
     import os

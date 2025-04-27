@@ -1,57 +1,45 @@
-# utils/scrapers/savant_scraper.py
-
 import requests
 from bs4 import BeautifulSoup
 
 def get_pitcher_savant_stats(url):
     try:
-        headers = {"User-Agent": "Mozilla/5.0"}
-        res = requests.get(url, headers=headers)
-
-        if res.status_code != 200:
-            return {"error": "❌ No se pudo acceder a Baseball Savant"}
-
-        soup = BeautifulSoup(res.text, "lxml")
-        tabla = soup.find("table")
-
-        if not tabla:
-            return {"error": "❌ No se encontró tabla de métricas"}
-
-        rows = tabla.find_all("tr")
-
-        # Inicializamos variables con valores por defecto
-        xera = csw = barrel = hard_hit = whiff = None
-
-        for row in rows:
-            cols = row.find_all("td")
-            if len(cols) >= 2:
-                metrica = cols[0].text.strip().lower()
-                valor = cols[1].text.strip().replace("%", "").replace(",", ".")
-
-                try:
-                    if "xera" in metrica:
-                        xera = float(valor)
-                    elif "csw" in metrica:
-                        csw = float(valor)
-                    elif "barrel" in metrica:
-                        barrel = float(valor)
-                    elif "hard hit" in metrica:
-                        hard_hit = float(valor)
-                    elif "whiff" in metrica:
-                        whiff = float(valor)
-                except ValueError:
-                    continue
-
-        if xera is None and csw is None and whiff is None:
-            return {"error": "❌ No se encontraron métricas válidas"}
-
-        return {
-            "xERA": xera,
-            "CSW%": csw,
-            "Barrel%": barrel,
-            "HardHit%": hard_hit,
-            "Whiff%": whiff
+        headers = {
+            "User-Agent": "Mozilla/5.0"
         }
+        response = requests.get(url, headers=headers)
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        tabla = soup.find("div", id="statcast_stats_pitching")
+        if not tabla:
+            return {"error": "❌ No se encontró la tabla esperada de estadísticas"}
+
+        tabla = tabla.find("table")
+        if not tabla:
+            return {"error": "❌ No se encontró la tabla dentro del div"}
+
+        stats = {}
+
+        # Recorremos todas las filas hasta encontrar una válida
+        for row in tabla.find_all("tr")[1:]:
+            celdas = row.find_all("td")
+            if not celdas or len(celdas) < 21:
+                continue  # Ignorar filas vacías o incompletas
+
+            try:
+                stats["xERA"] = float(celdas[20].text.strip()) if celdas[20].text.strip() else None
+                stats["CSW%"] = float(celdas[18].text.strip()) if celdas[18].text.strip() else None
+                stats["Whiff%"] = float(celdas[17].text.strip()) if celdas[17].text.strip() else None
+                stats["Barrel%"] = float(celdas[5].text.strip()) if celdas[5].text.strip() else None
+                stats["HardHit%"] = float(celdas[16].text.strip()) if celdas[16].text.strip() else None
+                break  # Solo queremos la fila más reciente válida
+            except Exception as e:
+                print(f"⚠️ Error al convertir valores: {e}")
+                continue
+
+        if not stats:
+            return {"error": "❌ No se encontraron estadísticas válidas"}
+
+        return stats
 
     except Exception as e:
-        return {"error": f"❌ Error inesperado: {str(e)}"}
+        return {"error": f"❌ Error general en Savant: {str(e)}"}

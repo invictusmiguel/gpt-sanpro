@@ -1,0 +1,2 @@
+id,fecha,equipo_local,equipo_visitante,obp_local,slg_local,woba_local,obp_visitante,slg_visitante,woba_visitante,era_pitcher_local,fip_pitcher_local,era_pitcher_visitante,fip_pitcher_visitante,estadio,clima,resultado_local,resultado_visitante,diferencial_carreras,equipo_ganador,obp_diff,slg_diff,woba_diff,era_diff,fip_diff
+1,2025-04-26,Fake Yankees,Fake Red Sox,0.333,0.444,0.35,0.322,0.422,0.328,3.45,3.75,4.15,3.95,Fake Stadium,Soleado 25°C,5,4,1,1,0.01100000000000001,0.02200000000000002,0.021999999999999964,0.7000000000000002,0.20000000000000018

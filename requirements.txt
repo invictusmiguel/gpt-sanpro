@@ -1,6 +1,9 @@
 flask
 python-dotenv
 requests
-scikit-learn
 beautifulsoup4
+pandas
+numpy
+scikit-learn
+joblib
 lxml

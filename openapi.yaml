@@ -1,28 +1,31 @@
-openapi: 3.0.1
+openapi: 3.0.0
 info:
-  title: GPT-SAN PRO
-  description: Plugin para generar parlays, simular apuestas y activar modo experto.
+  title: GPT-SANPRO
   version: "1.0"
+  description: API de apuestas deportivas inteligentes
 servers:
   - url: https://gpt-sanpro-clean.onrender.com
+
 paths:
-  /comando:
-    post:
-      summary: Ejecuta comandos de apuestas por texto
-      requestBody:
-        required: true
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              type: object
-              properties:
-                comando:
-                  type: string
-                  example: "dame un parley"
+  /parley_seguro_vida_json:
+    get:
+      summary: Devuelve json con el parley seguro
       responses:
-        "200":
-          description: Respuesta del sistema de apuestas
-          content:
-            text/plain:
-              schema:
-                type: string
+        '200':
+          description: Lista de parlays
+
+  /prediccion:
+    get:
+      summary: Predicción con goles simulados
+      parameters:
+        - name: goles_local
+          in: query
+          schema:
+            type: number
+        - name: goles_visita
+          in: query
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Probabilidades calculadas
