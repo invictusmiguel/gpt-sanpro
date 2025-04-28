@@ -1,18 +1,27 @@
+# 📦 Importaciones necesarias
 from flask import Flask, request, render_template, send_from_directory, jsonify
 from dotenv import load_dotenv
 import os
 import json
 import hashlib
+import joblib
+import pandas as pd
+import numpy as np
 from datetime import datetime, timezone
 
-# Carga variables de entorno
-load_dotenv()
-# 📦 Importaciones necesarias
-import joblib
-import numpy as np
-from flask import Flask, request, jsonify
+# 📦 Importaciones internas del proyecto
+from utils import probabilidades
+from predictor import predecir_resultado
+from utils.baseball_predictor import predecir_super_altas_bajas
+from utils.parleys.parley_seguro_vida import generar_parleys_seguro_vida
 
-# 🔵 Cargar modelos y scaler entrenados
+# 🔵 Cargar variables de entorno
+load_dotenv()
+
+# 🔵 Inicializar Flask
+app = Flask(__name__)
+
+# 🔵 Cargar Scaler y Modelos entrenados
 try:
     scaler = joblib.load('models/scaler.pkl')
     print("✅ Scaler cargado correctamente.")
@@ -31,46 +40,7 @@ try:
 except Exception as e:
     print(f"❌ Error al cargar modelo de clasificación: {e}")
 
-# 🔵 Inicializar Flask
-app = Flask(__name__)
-
-# 📦 Importaciones del proyecto
-from utils import probabilidades
-from predictor import predecir_resultado
-from utils.baseball_predictor import predecir_super_altas_bajas
-from utils.parleys.parley_seguro_vida import generar_parleys_seguro_vida
-
-# Inicializa Flask
-app = Flask(__name__)
-
-# -----------------------------------
-# 📦 Cargar Scaler y Modelos de Machine Learning
-# -----------------------------------
-import joblib
-import numpy as np
-
-# Cargar el scaler
-try:
-    scaler = joblib.load('models/scaler.pkl')
-    print("✅ Scaler cargado correctamente.")
-except Exception as e:
-    print(f"❌ Error cargando scaler.pkl: {str(e)}")
-
-# Cargar el modelo de regresión (diferencial de carreras)
-try:
-    modelo_regresion = joblib.load('models/modelo_regresion.pkl')
-    print("✅ Modelo de regresión cargado correctamente.")
-except Exception as e:
-    print(f"❌ Error cargando modelo_regresion.pkl: {str(e)}")
-
-# Cargar el modelo de clasificación (probabilidad de victoria)
-try:
-    modelo_clasificacion = joblib.load('models/modelo_clasificacion.pkl')
-    print("✅ Modelo de clasificación cargado correctamente.")
-except Exception as e:
-    print(f"❌ Error cargando modelo_clasificacion.pkl: {str(e)}")
-
-# 🧠 Ruta principal HTML para comandos desde el navegador
+# 🧠 Ruta principal HTML (index)
 @app.route("/", methods=["GET", "POST"])
 def index():
     respuesta = ""
@@ -127,16 +97,60 @@ def index():
             respuesta = "❌ Comando no reconocido"
 
     return render_template("index.html", response=respuesta)
-# --------------------------------------------------
-# 📊 Endpoint para predicción de over/under
-# --------------------------------------------------
 
+# 🎯 Endpoint Oficial de Predicción
+@app.route('/predict', methods=['POST'])
+def predict():
+    try:
+        data = request.get_json()
+
+        # Validar campos obligatorios
+        required_fields = ['obp_diff', 'slg_diff', 'woba_diff', 'era_diff', 'fip_diff']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({'error': f'Falta el campo obligatorio: {field}'}), 400
+
+        # Crear input como DataFrame con nombres correctos
+        input_dict = {
+            "obp_local": [data['obp_diff']],
+            "slg_local": [data['slg_diff']],
+            "woba_local": [data['woba_diff']],
+            "era_pitcher_local": [data['era_diff']],
+            "fip_pitcher_local": [data['fip_diff']],
+            "obp_visitante": [data['obp_diff']],
+            "slg_visitante": [data['slg_diff']],
+            "woba_visitante": [data['woba_diff']],
+            "era_pitcher_visitante": [data['era_diff']],
+            "fip_pitcher_visitante": [data['fip_diff']],
+        }
+        input_data_full = pd.DataFrame(input_dict)
+
+        # Escalar
+        input_scaled = scaler.transform(input_data_full)
+
+        # Predicciones
+        diferencial_predicho = modelo_regresion.predict(input_scaled)[0]
+        probas = modelo_clasificacion.predict_proba(input_scaled)[0]
+        prob_local = round(float(probas[1]), 2)
+        prob_visitante = round(float(probas[0]), 2)
+        equipo_ganador = "local" if prob_local > prob_visitante else "visitante"
+
+        return jsonify({
+            'diferencial_carreras_estimado': round(float(diferencial_predicho), 2),
+            'equipo_ganador_probable': equipo_ganador,
+            'probabilidad_ganador_local': prob_local,
+            'probabilidad_ganador_visitante': prob_visitante
+        })
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# 📊 Endpoint de Over/Under
 @app.route("/super_altas_bajas", methods=["GET"])
 def prediccion_over_under():
     equipo1 = request.args.get("equipo1")
     equipo2 = request.args.get("equipo2")
 
-    # 🔄 Simulación de partidos históricos
     partidos = [
         {"carreras_local": 6, "carreras_visita": 4},
         {"carreras_local": 5, "carreras_visita": 3},
@@ -157,63 +171,8 @@ def prediccion_over_under():
     })
 
     return jsonify(resultado)
-# -----------------------------------
-# 🎯 Endpoint de Predicción Oficial /predict
-# -----------------------------------
-# 🎯 Endpoint de Predicción Oficial /predict (Mejorado con validaciones)
-# 🔵 Endpoint para hacer predicciones
-@app.route('/predict', methods=['POST'])
-def predict():
-    try:
-        data = request.get_json()
 
-        # Validar campos obligatorios
-        required_fields = ['obp_diff', 'slg_diff', 'woba_diff', 'era_diff', 'fip_diff']
-        for field in required_fields:
-            if field not in data:
-                return jsonify({'error': f'Falta el campo obligatorio: {field}'}), 400
-
-        # Crear el vector de entrada
-        input_data = np.array([
-            data['obp_diff'],
-            data['slg_diff'],
-            data['woba_diff'],
-            data['era_diff'],
-            data['fip_diff']
-        ]).reshape(1, -1)
-
-        # Como nuestros modelos esperan 10 features (local y visitante por separado),
-        # duplicamos los diferenciales para completar
-        input_data_full = np.hstack((input_data, input_data))  # Ahora son 10 columnas
-
-        # Escalar los datos
-        input_scaled = scaler.transform(input_data_full)
-
-        # Hacer predicciones
-        diferencial_predicho = modelo_regresion.predict(input_scaled)[0]
-        probas = modelo_clasificacion.predict_proba(input_scaled)[0]
-        prob_local = round(float(probas[1]), 2)
-        prob_visitante = round(float(probas[0]), 2)
-        equipo_ganador = "local" if prob_local > prob_visitante else "visitante"
-
-        # Devolver respuesta
-        return jsonify({
-            'diferencial_carreras_estimado': round(float(diferencial_predicho), 2),
-            'equipo_ganador_probable': equipo_ganador,
-            'probabilidad_ganador_local': prob_local,
-            'probabilidad_ganador_visitante': prob_visitante
-        })
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
-
-# --------------------------------------------------
-# 🧠 Endpoint para predicción de probabilidades básicas
-# --------------------------------------------------
-
+# 🧠 Endpoint de predicción básica de probabilidades
 @app.route('/prediccion', methods=['GET'])
 def prediccion_api():
     try:
@@ -227,10 +186,7 @@ def prediccion_api():
     except Exception as e:
         return {"error": str(e)}, 400
 
-# --------------------------------------------------
-# 🌐 Plugins de manifest y logo
-# --------------------------------------------------
-
+# 🌐 Endpoints de Recursos para Plugins
 @app.route('/.well-known/ai-plugin.json')
 def serve_manifest():
     return send_from_directory('.well-known', 'ai-plugin.json', mimetype='application/json')
@@ -242,10 +198,8 @@ def serve_openapi():
 @app.route('/static/logo.png')
 def serve_logo():
     return send_from_directory('static', 'logo.png', mimetype='image/png')
-# --------------------------------------------------
-# 💼 Endpoint para Parley Seguro de Vida (HTML)
-# --------------------------------------------------
 
+# 💼 Endpoint de Parleys Seguro de Vida
 @app.route("/parley_seguro_vida", methods=["GET"])
 def parley_seguro_vida():
     try:
@@ -261,7 +215,6 @@ def parley_seguro_vida():
         return f"<h3>⚠️ {parlays[0]['error']}</h3>"
 
     respuesta = "<h2>💼 Estrategia Seguro de Vida (SAMPRO v1.8.1)</h2>"
-
     for parley in parlays:
         respuesta += f"<h3>🎯 {parley['nombre']}</h3>"
         respuesta += f"<b>Cuota Total:</b> {parley['cuota_total']}<br>"
@@ -269,16 +222,11 @@ def parley_seguro_vida():
         respuesta += f"<b>Valor Esperado:</b> {parley['valor_esperado']}<br>"
         respuesta += f"<b>Inversión:</b> {parley['inversion']} soles<br>"
         respuesta += f"<b>Código SAMPRO:</b> {parley['codigo_sampro']}<br><ul>"
-
         for pick in parley["picks"]:
             respuesta += f"<li>{pick['partido']} — {pick['mercado']} — Cuota: {pick['cuota']} — Confianza: {pick['confianza']}%</li>"
         respuesta += "</ul><hr>"
 
     return respuesta
-
-# --------------------------------------------------
-# 🧾 Versión JSON del endpoint Parley Seguro de Vida
-# --------------------------------------------------
 
 @app.route("/parley_seguro_vida_json", methods=["GET"])
 def parley_seguro_vida_json():
@@ -296,11 +244,7 @@ def parley_seguro_vida_json():
 
     return {"parleys": parlays}, 200
 
-# --------------------------------------------------
-# 🟢 Iniciar servidor Flask
-# --------------------------------------------------
-
+# 🟢 Lanzar servidor Flask
 if __name__ == '__main__':
-    import os
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
