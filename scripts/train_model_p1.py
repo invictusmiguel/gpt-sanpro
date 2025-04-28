@@ -1,34 +1,49 @@
-# scripts/train_model_p2.py
+# scripts/train_model_p1.py
 
+import sqlite3
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-import pickle
 import os
 
-# 🚀 Cargar dataset de entrenamiento
-dataset_path = "data/dataset_entrenamiento.csv"
+# ⚙️ Crear carpeta data si no existe
+os.makedirs('data', exist_ok=True)
 
-if not os.path.exists(dataset_path):
-    print(f"❌ Error: No se encontró el archivo {dataset_path}")
-    exit()
+# 📥 Leer la tabla 'partidos' desde la base de datos
+conn = sqlite3.connect('database/partidos.db')
+df = pd.read_sql_query("SELECT * FROM partidos", conn)
+conn.close()
 
-df = pd.read_csv(dataset_path)
+print(f"✅ {len(df)} partidos cargados desde la base de datos.")
 
-# 🚀 Separar características (X) y etiquetas (y)
-X = df[['goles_local', 'goles_visita']]
-y = df['acierto']
+# 🧹 Eliminar partidos con datos incompletos en campos clave
+campos_obligatorios = [
+    'obp_local', 'slg_local', 'woba_local',
+    'obp_visitante', 'slg_visitante', 'woba_visitante',
+    'era_pitcher_local', 'fip_pitcher_local',
+    'era_pitcher_visitante', 'fip_pitcher_visitante',
+    'resultado_local', 'resultado_visitante'
+]
 
-# 🚀 Dividir en entrenamiento y prueba
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+df = df.dropna(subset=campos_obligatorios)
+print(f"✅ {len(df)} partidos después de eliminar filas con datos nulos.")
 
-# 🚀 Crear el modelo Random Forest
-modelo = RandomForestClassifier(n_estimators=100, random_state=42)
-modelo.fit(X_train, y_train)
+# 🧹 Eliminar partidos donde hubo empate
+df = df[df['resultado_local'] != df['resultado_visitante']]
+print(f"✅ {len(df)} partidos después de eliminar empates.")
 
-# 🚀 Guardar el modelo entrenado
-os.makedirs("models", exist_ok=True)
-with open("models/modelo.pkl", "wb") as f:
-    pickle.dump(modelo, f)
+# 🛠️ Crear variables derivadas (features)
+df['obp_diff'] = df['obp_local'] - df['obp_visitante']
+df['slg_diff'] = df['slg_local'] - df['slg_visitante']
+df['woba_diff'] = df['woba_local'] - df['woba_visitante']
+df['era_diff'] = df['era_pitcher_visitante'] - df['era_pitcher_local']
+df['fip_diff'] = df['fip_pitcher_visitante'] - df['fip_pitcher_local']
 
-print("✅ Modelo entrenado y guardado en models/modelo.pkl")
+# 🏁 Crear las variables de salida (targets)
+df['diferencial_carreras'] = df['resultado_local'] - df['resultado_visitante']
+df['equipo_ganador'] = df['resultado_local'] > df['resultado_visitante']
+df['equipo_ganador'] = df['equipo_ganador'].astype(int)  # 1 = local gana, 0 = local pierde
+
+# 💾 Guardar dataset preprocesado
+output_path = 'data/dataset_entrenamiento.csv'
+df.to_csv(output_path, index=False)
+
+print(f"🎯 Dataset preprocesado guardado en {output_path}")

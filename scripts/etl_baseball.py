@@ -71,6 +71,34 @@ def extraer_sabermetria_bateo_mlb():
 
     print(f"✅ {len(df_bateo)} equipos extraídos desde MLB API (bateo).")
     return df_bateo
+# 📚 Función para extraer sabermetría de pitcheo desde MLB API
+def extraer_sabermetria_pitcheo_mlb():
+    print("🔵 Extrayendo sabermetría de pitcheo desde MLB API...")
+
+    url = "https://statsapi.mlb.com/api/v1/teams/stats?stats=season&group=pitching"
+    
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.json()
+    except Exception as e:
+        print(f"❌ Error accediendo a MLB Stats API (pitcheo): {e}")
+        return pd.DataFrame()
+
+    equipos = []
+    for team_stat in data.get('stats', [])[0].get('splits', []):
+        equipo = {
+            'equipo': team_stat.get('team', {}).get('name', '').lower(),
+            'era': float(team_stat.get('stat', {}).get('era', 0)),
+            'fip': float(team_stat.get('stat', {}).get('fip', 0)) if 'fip' in team_stat.get('stat', {}) else None
+        }
+        equipos.append(equipo)
+
+    df_pitcheo = pd.DataFrame(equipos)
+
+    print(f"✅ {len(df_pitcheo)} equipos extraídos desde MLB API (pitcheo).")
+    return df_pitcheo
+
 
 # 📚 Función para extraer sabermetría de pitcheo desde MLB API
 def extraer_sabermetria_pitcheo_mlb():

@@ -18,22 +18,26 @@ if not os.path.exists(dataset_path):
 
 df = pd.read_csv(dataset_path)
 
-print("✅ Dataset cargado exitosamente.")
+# 🟠 Preparar features (X) y targets (y)
+print("🟠 Preparando features y targets para los modelos...")
 
-# 🚀 Paso 2: Preparar Features y Targets
-features = ['obp_diff', 'slg_diff', 'woba_diff', 'era_diff', 'fip_diff']
+features = [
+    'obp_local', 'slg_local', 'woba_local',
+    'obp_visitante', 'slg_visitante', 'woba_visitante',
+    'era_pitcher_local', 'fip_pitcher_local',
+    'era_pitcher_visitante', 'fip_pitcher_visitante'
+]
+
 X = df[features]
-y_regresion = df['diferencial_carreras']
-y_clasificacion = df['equipo_ganador']
 
-# 🚀 Paso 3: Escalar las Features
+# Escalar las características
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
+y_regresion = df['resultado_local'] - df['resultado_visitante']  # Diferencial de carreras
+y_clasificacion = (df['resultado_local'] > df['resultado_visitante']).astype(int)  # 1 si gana local, 0 si no
 
-# Guardar scaler
-os.makedirs("models", exist_ok=True)
-joblib.dump(scaler, 'models/scaler.pkl')
-print("✅ Escalador guardado en models/scaler.pkl.")
+print("✅ Features y targets preparados.")
+
 
 # 🚀 Paso 4: División en Train/Test
 X_train, X_test, y_train_reg, y_test_reg = train_test_split(
@@ -88,7 +92,10 @@ print("\n🎯 Evaluación Modelo de Clasificación:")
 print(f"Accuracy (Precisión): {accuracy:.3f}")
 print(f"AUC-ROC Score: {auc:.3f}")
 
-# 🚀 Paso 7: Guardado de Modelos
+# Guardar el scaler
+joblib.dump(scaler, 'models/scaler.pkl')
+
+print("\n✅ Modelos guardados exitosamente en carpeta models/:")
 joblib.dump(modelo_regresion, 'models/modelo_regresion.pkl')
 joblib.dump(modelo_clasificacion, 'models/modelo_clasificacion.pkl')
 
