@@ -110,20 +110,32 @@ def predict():
             if field not in data:
                 return jsonify({'error': f'Falta el campo obligatorio: {field}'}), 400
 
-        # Crear input como DataFrame con nombres correctos
+        # Crear input respetando el mismo orden exacto de entrenamiento
         input_dict = {
             "obp_local": [data['obp_diff']],
             "slg_local": [data['slg_diff']],
             "woba_local": [data['woba_diff']],
-            "era_pitcher_local": [data['era_diff']],
-            "fip_pitcher_local": [data['fip_diff']],
             "obp_visitante": [data['obp_diff']],
             "slg_visitante": [data['slg_diff']],
             "woba_visitante": [data['woba_diff']],
+            "era_pitcher_local": [data['era_diff']],
+            "fip_pitcher_local": [data['fip_diff']],
             "era_pitcher_visitante": [data['era_diff']],
             "fip_pitcher_visitante": [data['fip_diff']],
         }
-        input_data_full = pd.DataFrame(input_dict)
+        # Crear DataFrame respetando el orden
+        input_data_full = pd.DataFrame(input_dict, columns=[
+            "obp_local",
+            "slg_local",
+            "woba_local",
+            "obp_visitante",
+            "slg_visitante",
+            "woba_visitante",
+            "era_pitcher_local",
+            "fip_pitcher_local",
+            "era_pitcher_visitante",
+            "fip_pitcher_visitante"
+        ])
 
         # Escalar
         input_scaled = scaler.transform(input_data_full)
