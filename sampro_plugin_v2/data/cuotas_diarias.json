@@ -1,0 +1,24 @@
+{
+  "partidos": [
+    {
+      "partido": "NY Yankees vs CLE Guardians",
+      "mercado": "Alta",
+      "cuota": 1.85,
+      "confianza": 92,
+      "pitcher_local": "Gerrit Cole",
+      "pitcher_visitante": "Shane Bieber",
+      "savant_local": "https://baseballsavant.mlb.com/player/543037",
+      "savant_visitante": "https://baseballsavant.mlb.com/player/605135"
+    },
+    {
+      "partido": "Red Sox vs Blue Jays",
+      "mercado": "Over 7.5",
+      "cuota": 1.70,
+      "confianza": 88,
+      "pitcher_local": "Chris Sale",
+      "pitcher_visitante": "Kevin Gausman",
+      "savant_local": "https://baseballsavant.mlb.com/player/519242",
+      "savant_visitante": "https://baseballsavant.mlb.com/player/543114"
+    }
+  ]
+}

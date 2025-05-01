@@ -1,0 +1,16 @@
+[OK] Archivo de picks encontrado. 
+[INFO] Activando entorno virtual... 
+[INFO] Ejecutando generador de parleys... 
+>> Generando parleys por niveles...
+[OK] Parleys por nivel exportados a data/parleys_por_nivel.json
+[INFO] Ejecutando tests... 
+============================= test session starts =============================
+platform win32 -- Python 3.13.3, pytest-8.3.5, pluggy-1.5.0
+rootdir: C:\Users\mario\Documents\apuestas\gpt_sanpro
+configfile: pyproject.toml
+collected 7 items
+
+test_generar_parleys.py .......                                          [100%]
+
+============================== 7 passed in 0.03s ==============================
+[OK] Todo finalizado correctamente. 

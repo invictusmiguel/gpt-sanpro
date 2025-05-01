@@ -1,0 +1,24 @@
+{
+  "fecha": "2025-05-01",
+  "nivel_1": {
+    "aciertos": 0,
+    "fallos": 4,
+    "porcentaje_exito": 0.0,
+    "roi": -1.0,
+    "ev_real_promedio": 1.238
+  },
+  "nivel_2": {
+    "aciertos": 0,
+    "fallos": 1,
+    "porcentaje_exito": 0.0,
+    "roi": -1.0,
+    "ev_real_promedio": 1.33
+  },
+  "nivel_3": {
+    "aciertos": 0,
+    "fallos": 0,
+    "porcentaje_exito": 0,
+    "roi": 0,
+    "ev_real_promedio": 0
+  }
+}

@@ -1,0 +1,38 @@
+[INFO] Activando entorno virtual... 
+[INFO] Ejecutando generaciÃ³n de parleys... 
+>> Generando parleys por niveles...
+[OK] Parleys por nivel exportados a data/parleys_por_nivel.json
+[INFO] Ejecutando evaluaciÃ³n predictiva... 
+Traceback (most recent call last):
+  File "C:\Users\mario\Documents\apuestas\gpt_sanpro\scripts\evaluar_parleys.py", line 81, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\mario\Documents\apuestas\gpt_sanpro\scripts\evaluar_parleys.py", line 78, in main
+    mostrar_dashboard(fecha, evaluacion)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mario\Documents\apuestas\gpt_sanpro\scripts\evaluar_parleys.py", line 46, in mostrar_dashboard
+    print(f"\n\U0001f4ca Evaluación – {fecha}")
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f4ca' in position 2: character maps to <undefined>
+[INFO] Ejecutando tests... 
+============================= test session starts =============================
+platform win32 -- Python 3.13.3, pytest-8.3.5, pluggy-1.5.0
+rootdir: C:\Users\mario\Documents\apuestas\gpt_sanpro
+configfile: pyproject.toml
+collected 7 items
+
+test_generar_parleys.py .......                                          [100%]
+
+============================== 7 passed in 0.03s ==============================
+============================= test session starts =============================
+platform win32 -- Python 3.13.3, pytest-8.3.5, pluggy-1.5.0
+rootdir: C:\Users\mario\Documents\apuestas\gpt_sanpro
+configfile: pyproject.toml
+collected 3 items
+
+test_evaluacion_predictiva.py ...                                        [100%]
+
+============================== 3 passed in 0.04s ==============================

@@ -1,0 +1,18 @@
+{
+    "schema_version": "v1",
+    "name_for_human": "SAMPRO Parley Predictor",
+    "name_for_model": "sampro_parleys",
+    "description_for_human": "Predicciones deportivas y parleys con IA y lógica matemática.",
+    "description_for_model": "Consulta parleys por nivel, predicciones, y evaluaciones de rendimiento.",
+    "auth": {
+      "type": "none"
+    },
+    "api": {
+      "type": "openapi",
+      "url": "https://gpt-sampro-clean.onrender.com/openapi.yaml"
+    },
+    "logo_url": "https://gpt-sampro-clean.onrender.com/static/logo.png",
+    "contact_email": "admin@sampro.ai",
+    "legal_info_url": "https://gpt-sampro-clean.onrender.com/static/legal.html"
+  }
+  

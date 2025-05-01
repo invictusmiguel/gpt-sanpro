@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Parley Seguro de Vida - SAMPRO</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 30px;
+            color: #2c3e50;
+        }
+
+        h2 {
+            text-align: center;
+            color: #34495e;
+        }
+
+        .parley {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        h3 {
+            margin-top: 0;
+            color: #e74c3c;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        .dato {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .separador {
+            border-top: 1px solid #ccc;
+            margin: 30px 0;
+        }
+    </style>
+</head>
+<body>
+
+<h2>💼 Estrategia Seguro de Vida (SAMPRO v1.8.1)</h2>
+
+{% for parley in parlays %}
+    <div class="parley">
+        <h3>🎯 {{ parley.nombre }}</h3>
+        <p class="dato"><span class="highlight">Cuota Total:</span> {{ parley.cuota_total }}</p>
+        <p class="dato"><span class="highlight">Probabilidad:</span> {{ parley.probabilidad * 100 | round(2) }}%</p>
+        <p class="dato"><span class="highlight">Valor Esperado:</span> {{ parley.valor_esperado }}</p>
+        <p class="dato"><span class="highlight">Inversión:</span> {{ parley.inversion }} soles</p>
+        <p class="dato"><span class="highlight">Código SAMPRO:</span> {{ parley.codigo_sampro }}</p>
+
+        <ul>
+            {% for pick in parley.picks %}
+                <li>
+                    <b>{{ pick.partido }}</b> — <i>{{ pick.mercado }}</i> —
+                    Cuota: <b>{{ pick.cuota }}</b> —
+                    Confianza: <b>{{ pick.confianza }}%</b>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endfor %}
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+openapi: 3.0.1
+info:
+  title: SAMPRO API
+  description: API para generación de parleys y análisis predictivo.
+  version: "1.0.0"
+servers:
+  - url: https://gpt-sampro-clean.onrender.com
+paths:
+  /parleys_por_nivel:
+    get:
+      summary: Obtener parleys por nivel
+      responses:
+        '200':
+          description: OK
+  /evaluacion:
+    get:
+      summary: Evaluación predictiva
+      responses:
+        '200':
+          description: OK
+  /predict:
+    post:
+      summary: Predicción personalizada
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                obp_diff: { type: number }
+                slg_diff: { type: number }
+                era_diff: { type: number }
+                fip_diff: { type: number }
+                equipo_local: { type: string }
+      responses:
+        '200':
+          description: Resultado

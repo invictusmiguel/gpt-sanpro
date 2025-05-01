@@ -1,0 +1,5 @@
+fecha,combinacion,cuota_total,probabilidad_total,valor_esperado,clasificacion
+2025-04-30,Yankees vs Red Sox | Dodgers vs Cubs,3.99,0.468,1.335,APTO
+2025-04-30,Yankees vs Red Sox | Giants vs Mets,3.8,0.432,1.074,APTO
+2025-04-30,Dodgers vs Cubs | Giants vs Mets,4.2,0.39,1.028,APTO
+2025-04-30,Yankees vs Red Sox | Dodgers vs Cubs | Giants vs Mets,7.98,0.281,1.522,RECHAZADO

@@ -1,0 +1,70 @@
+{
+  "Yankees": {
+    "pitcher": "Shohei Ohtani",
+    "lesionados": [
+      "Judge"
+    ],
+    "riesgo": "bajo"
+  },
+  "Red Sox": {
+    "pitcher": "Gerrit Cole",
+    "lesionados": [],
+    "riesgo": "alto"
+  },
+  "Dodgers": {
+    "pitcher": "Clayton Kershaw",
+    "lesionados": [
+      "Betts"
+    ],
+    "riesgo": "alto"
+  },
+  "Braves": {
+    "pitcher": "Gerrit Cole",
+    "lesionados": [
+      "Trout"
+    ],
+    "riesgo": "alto"
+  },
+  "Mets": {
+    "pitcher": "Shohei Ohtani",
+    "lesionados": [
+      "Judge"
+    ],
+    "riesgo": "bajo"
+  },
+  "Cubs": {
+    "pitcher": "Shohei Ohtani",
+    "lesionados": [
+      "Harper"
+    ],
+    "riesgo": "bajo"
+  },
+  "Giants": {
+    "pitcher": "Jacob deGrom",
+    "lesionados": [
+      "Betts"
+    ],
+    "riesgo": "medio"
+  },
+  "Cardinals": {
+    "pitcher": "Gerrit Cole",
+    "lesionados": [
+      "Altuve"
+    ],
+    "riesgo": "medio"
+  },
+  "Astros": {
+    "pitcher": "Clayton Kershaw",
+    "lesionados": [
+      "Betts"
+    ],
+    "riesgo": "bajo"
+  },
+  "Rays": {
+    "pitcher": "Clayton Kershaw",
+    "lesionados": [
+      "Altuve"
+    ],
+    "riesgo": "medio"
+  }
+}

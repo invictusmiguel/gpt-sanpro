@@ -1,0 +1,47 @@
+{
+  "fecha": "2025-04-30",
+  "parleys": [
+    {
+      "combinacion": [
+        "Yankees vs Red Sox",
+        "Dodgers vs Cubs"
+      ],
+      "cuotas": [
+        1.9,
+        2.1
+      ],
+      "cuota_total": 3.99,
+      "probabilidad_total": 0.468,
+      "valor_esperado": 1.335,
+      "clasificacion": "APTO"
+    },
+    {
+      "combinacion": [
+        "Yankees vs Red Sox",
+        "Giants vs Mets"
+      ],
+      "cuotas": [
+        1.9,
+        2.0
+      ],
+      "cuota_total": 3.8,
+      "probabilidad_total": 0.432,
+      "valor_esperado": 1.074,
+      "clasificacion": "APTO"
+    },
+    {
+      "combinacion": [
+        "Dodgers vs Cubs",
+        "Giants vs Mets"
+      ],
+      "cuotas": [
+        2.1,
+        2.0
+      ],
+      "cuota_total": 4.2,
+      "probabilidad_total": 0.39,
+      "valor_esperado": 1.028,
+      "clasificacion": "APTO"
+    }
+  ]
+}

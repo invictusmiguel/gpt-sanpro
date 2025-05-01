@@ -1,0 +1,75 @@
+{
+  "fecha": "2025-05-01",
+  "nivel_1": [
+    {
+      "combinacion": [
+        "Yankees vs Red Sox",
+        "Dodgers vs Cubs"
+      ],
+      "cuotas": [
+        1.9,
+        2.1
+      ],
+      "cuota_total": 3.99,
+      "probabilidad_total": 0.468,
+      "valor_esperado": 1.33
+    },
+    {
+      "combinacion": [
+        "Yankees vs Red Sox",
+        "Giants vs Mets"
+      ],
+      "cuotas": [
+        1.9,
+        2.0
+      ],
+      "cuota_total": 3.8,
+      "probabilidad_total": 0.432,
+      "valor_esperado": 1.07
+    },
+    {
+      "combinacion": [
+        "Dodgers vs Cubs",
+        "Giants vs Mets"
+      ],
+      "cuotas": [
+        2.1,
+        2.0
+      ],
+      "cuota_total": 4.2,
+      "probabilidad_total": 0.39,
+      "valor_esperado": 1.03
+    },
+    {
+      "combinacion": [
+        "Yankees vs Red Sox",
+        "Dodgers vs Cubs",
+        "Giants vs Mets"
+      ],
+      "cuotas": [
+        1.9,
+        2.1,
+        2.0
+      ],
+      "cuota_total": 7.98,
+      "probabilidad_total": 0.281,
+      "valor_esperado": 1.52
+    }
+  ],
+  "nivel_2": [
+    {
+      "combinacion": [
+        "Yankees vs Red Sox",
+        "Dodgers vs Cubs"
+      ],
+      "cuotas": [
+        1.9,
+        2.1
+      ],
+      "cuota_total": 3.99,
+      "probabilidad_total": 0.468,
+      "valor_esperado": 1.33
+    }
+  ],
+  "nivel_3": []
+}

@@ -1,0 +1,86 @@
+[
+    {
+        "evento": "Equipo 1 vs Equipo 2",
+        "cuota": 1.8,
+        "probabilidad": 0.5,
+        "mercado": "ML",
+        "fecha": "2025-04-30"
+    },
+    {
+        "evento": "Equipo 2 vs Equipo 3",
+        "cuota": 1.85,
+        "probabilidad": 0.51,
+        "mercado": "ML",
+        "fecha": "2025-04-30"
+    },
+    {
+        "evento": "Equipo 3 vs Equipo 4",
+        "cuota": 1.9,
+        "probabilidad": 0.52,
+        "mercado": "ML",
+        "fecha": "2025-04-30"
+    },
+    {
+        "evento": "Equipo 4 vs Equipo 5",
+        "cuota": 1.95,
+        "probabilidad": 0.53,
+        "mercado": "ML",
+        "fecha": "2025-04-30"
+    },
+    {
+        "evento": "Equipo 5 vs Equipo 6",
+        "cuota": 2.0,
+        "probabilidad": 0.54,
+        "mercado": "ML",
+        "fecha": "2025-04-30"
+    },
+    {
+        "evento": "Equipo 6 vs Equipo 7",
+        "cuota": 2.05,
+        "probabilidad": 0.55,
+        "mercado": "ML",
+        "fecha": "2025-04-30"
+    },
+    {
+        "evento": "Equipo 7 vs Equipo 8",
+        "cuota": 2.1,
+        "probabilidad": 0.56,
+        "mercado": "ML",
+        "fecha": "2025-04-30"
+    },
+    {
+        "evento": "Equipo 8 vs Equipo 9",
+        "cuota": 2.15,
+        "probabilidad": 0.57,
+        "mercado": "ML",
+        "fecha": "2025-04-30"
+    },
+    {
+        "evento": "Equipo 9 vs Equipo 10",
+        "cuota": 2.2,
+        "probabilidad": 0.58,
+        "mercado": "ML",
+        "fecha": "2025-04-30"
+    },
+    {
+        "evento": "Equipo 10 vs Equipo 11",
+        "cuota": 2.25,
+        "probabilidad": 0.59,
+        "mercado": "ML",
+        "fecha": "2025-04-30"
+    },
+    {
+        "evento": "Equipo 11 vs Equipo 12",
+        "cuota": 2.3,
+        "probabilidad": 0.6,
+        "mercado": "ML",
+        "fecha": "2025-04-30"
+    },
+    {
+        "evento": "Equipo 12 vs Equipo 13",
+        "cuota": 2.35,
+        "probabilidad": 0.61,
+        "mercado": "ML",
+        "fecha": "2025-04-30"
+    }
+]

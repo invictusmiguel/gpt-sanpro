@@ -1,0 +1,32 @@
+[INFO] Activando entorno virtual... 
+[INFO] Ejecutando generaciÃ³n de parleys... 
+>> Generando parleys por niveles...
+[OK] Parleys por nivel exportados a data/parleys_por_nivel.json
+[INFO] Ejecutando evaluaciÃ³n predictiva... 
+
+[INFO] Evaluación – 2025-05-01
+[BAJO] Nivel_1 – ROI: -100%, Éxito: 0%
+[BAJO] Nivel_2 – ROI: -100%, Éxito: 0%
+[BAJO] Nivel_3 – ROI: 0%, Éxito: 0%
+
+>> Nivel_3 es el más rentable en este ciclo
+
+[INFO] Ejecutando tests... 
+============================= test session starts =============================
+platform win32 -- Python 3.13.3, pytest-8.3.5, pluggy-1.5.0
+rootdir: C:\Users\mario\Documents\apuestas\gpt_sanpro
+configfile: pyproject.toml
+collected 7 items
+
+test_generar_parleys.py .......                                          [100%]
+
+============================== 7 passed in 0.03s ==============================
+============================= test session starts =============================
+platform win32 -- Python 3.13.3, pytest-8.3.5, pluggy-1.5.0
+rootdir: C:\Users\mario\Documents\apuestas\gpt_sanpro
+configfile: pyproject.toml
+collected 3 items
+
+test_evaluacion_predictiva.py ...                                        [100%]
+
+============================== 3 passed in 0.04s ==============================

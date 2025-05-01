@@ -1,0 +1,101 @@
+[
+  {
+    "evento": "Chicago Cubs vs Pittsburgh Pirates",
+    "fecha": "2025-05-01",
+    "equipo_local": "Chicago Cubs",
+    "equipo_visitante": "Pittsburgh Pirates",
+    "cuota_local": 2.24,
+    "cuota_visitante": 1.68,
+    "clima": "Nublado"
+  },
+  {
+    "evento": "Cincinnati Reds vs St. Louis Cardinals",
+    "fecha": "2025-05-01",
+    "equipo_local": "Cincinnati Reds",
+    "equipo_visitante": "St. Louis Cardinals",
+    "cuota_local": 1.83,
+    "cuota_visitante": 2.02,
+    "clima": "Nublado"
+  },
+  {
+    "evento": "Arizona Diamondbacks vs New York Mets",
+    "fecha": "2025-05-01",
+    "equipo_local": "Arizona Diamondbacks",
+    "equipo_visitante": "New York Mets",
+    "cuota_local": 2.36,
+    "cuota_visitante": 1.62,
+    "clima": "Ventoso"
+  },
+  {
+    "evento": "Cleveland Guardians vs Minnesota Twins",
+    "fecha": "2025-05-01",
+    "equipo_local": "Cleveland Guardians",
+    "equipo_visitante": "Minnesota Twins",
+    "cuota_local": 1.86,
+    "cuota_visitante": 1.98,
+    "clima": "Ventoso"
+  },
+  {
+    "evento": "Kansas City Royals vs Tampa Bay Rays",
+    "fecha": "2025-05-01",
+    "equipo_local": "Kansas City Royals",
+    "equipo_visitante": "Tampa Bay Rays",
+    "cuota_local": 2.3,
+    "cuota_visitante": 1.65,
+    "clima": "Ventoso"
+  },
+  {
+    "evento": "Chicago White Sox vs Milwaukee Brewers",
+    "fecha": "2025-05-01",
+    "equipo_local": "Chicago White Sox",
+    "equipo_visitante": "Milwaukee Brewers",
+    "cuota_local": 2.52,
+    "cuota_visitante": 1.56,
+    "clima": "Lluvia leve"
+  },
+  {
+    "evento": "Oakland Athletics vs Texas Rangers",
+    "fecha": "2025-05-01",
+    "equipo_local": "Oakland Athletics",
+    "equipo_visitante": "Texas Rangers",
+    "cuota_local": 2.3,
+    "cuota_visitante": 1.65,
+    "clima": "Despejado"
+  },
+  {
+    "evento": "Philadelphia Phillies vs Washington Nationals",
+    "fecha": "2025-05-01",
+    "equipo_local": "Philadelphia Phillies",
+    "equipo_visitante": "Washington Nationals",
+    "cuota_local": 1.57,
+    "cuota_visitante": 2.46,
+    "clima": "Despejado"
+  },
+  {
+    "evento": "Boston Red Sox vs Toronto Blue Jays",
+    "fecha": "2025-05-01",
+    "equipo_local": "Boston Red Sox",
+    "equipo_visitante": "Toronto Blue Jays",
+    "cuota_local": 1.94,
+    "cuota_visitante": 1.91,
+    "clima": "Ventoso"
+  },
+  {
+    "evento": "Detroit Tigers vs Los Angeles Angels",
+    "fecha": "2025-05-02",
+    "equipo_local": "Detroit Tigers",
+    "equipo_visitante": "Los Angeles Angels",
+    "cuota_local": 1.83,
+    "cuota_visitante": 2.02,
+    "clima": "Nublado"
+  },
+  {
+    "evento": "Colorado Rockies vs San Francisco Giants",
+    "fecha": "2025-05-02",
+    "equipo_local": "Colorado Rockies",
+    "equipo_visitante": "San Francisco Giants",
+    "cuota_local": 3.05,
+    "cuota_visitante": 1.4,
+    "clima": "Lluvia leve"
+  }
+]

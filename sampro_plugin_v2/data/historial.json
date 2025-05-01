@@ -1,0 +1,16 @@
+[
+  {
+    "fecha": "2025-04-20T19:34:47.827415",
+    "fixture_id": 1044645,
+    "probabilidad": 0.65,
+    "cuota": 2.3,
+    "acertado": true
+  },
+  {
+    "fecha": "2025-04-20T19:34:58.388469",
+    "fixture_id": 1044645,
+    "probabilidad": 0.65,
+    "cuota": 2.3,
+    "acertado": false
+  }
+]

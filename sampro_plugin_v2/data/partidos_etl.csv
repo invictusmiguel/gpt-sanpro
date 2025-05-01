@@ -1,0 +1,21 @@
+fecha,equipo_local,equipo_visitante,obp_local,slg_local,woba_local,obp_visitante,slg_visitante,woba_visitante,era_pitcher_local,fip_pitcher_local,era_pitcher_visitante,fip_pitcher_visitante,estadio,clima,resultado_local,resultado_visitante
+2025-04-26,Fake Yankees,Fake Red Sox,0.333,0.444,0.35,0.322,0.422,0.328,3.45,3.75,4.15,3.95,Fake Stadium,Soleado 25°C,5,4
+2025-04-26,Fake Yankees,Fake Red Sox,0.333,0.444,0.35,0.322,0.422,0.328,3.45,3.75,4.15,3.95,Fake Stadium,Soleado 25°C,5,4
+2025-04-26,Fake Yankees,Fake Red Sox,0.333,0.444,0.35,0.322,0.422,0.328,3.45,3.75,4.15,3.95,Fake Stadium,Soleado 25°C,5,4
+2025-04-26,New York Yankees,Toronto Blue Jays,0.33,0.42,0.34,0.32,0.41,0.33,3.5,3.8,4.1,3.9,Yankee Stadium,N/A,0,0
+2025-04-26,Cleveland Guardians,Boston Red Sox,0.33,0.42,0.34,0.32,0.41,0.33,3.5,3.8,4.1,3.9,Progressive Field,N/A,0,0
+2025-04-26,Cleveland Guardians,Boston Red Sox,0.33,0.42,0.34,0.32,0.41,0.33,3.5,3.8,4.1,3.9,Progressive Field,N/A,0,0
+2025-04-26,Detroit Tigers,Baltimore Orioles,0.33,0.42,0.34,0.32,0.41,0.33,3.5,3.8,4.1,3.9,Comerica Park,N/A,0,0
+2025-04-26,Detroit Tigers,Baltimore Orioles,0.33,0.42,0.34,0.32,0.41,0.33,3.5,3.8,4.1,3.9,Comerica Park,N/A,0,0
+2025-04-26,Minnesota Twins,Los Angeles Angels,0.33,0.42,0.34,0.32,0.41,0.33,3.5,3.8,4.1,3.9,Target Field,N/A,0,0
+2025-04-26,St. Louis Cardinals,Milwaukee Brewers,0.33,0.42,0.34,0.32,0.41,0.33,3.5,3.8,4.1,3.9,Busch Stadium,N/A,0,0
+2025-04-26,Colorado Rockies,Cincinnati Reds,0.33,0.42,0.34,0.32,0.41,0.33,3.5,3.8,4.1,3.9,Coors Field,N/A,0,0
+2025-04-26,Washington Nationals,New York Mets,0.33,0.42,0.34,0.32,0.41,0.33,3.5,3.8,4.1,3.9,Nationals Park,N/A,0,0
+2025-04-26,San Francisco Giants,Texas Rangers,0.33,0.42,0.34,0.32,0.41,0.33,3.5,3.8,4.1,3.9,Oracle Park,N/A,0,0
+2025-04-26,Chicago Cubs,Philadelphia Phillies,0.33,0.42,0.34,0.32,0.41,0.33,3.5,3.8,4.1,3.9,Wrigley Field,N/A,0,0
+2025-04-26,Athletics,Chicago White Sox,0.33,0.42,0.34,0.32,0.41,0.33,3.5,3.8,4.1,3.9,Sutter Health Park,N/A,0,0
+2025-04-26,Kansas City Royals,Houston Astros,0.33,0.42,0.34,0.32,0.41,0.33,3.5,3.8,4.1,3.9,Kauffman Stadium,N/A,0,0
+2025-04-26,Arizona Diamondbacks,Atlanta Braves,0.33,0.42,0.34,0.32,0.41,0.33,3.5,3.8,4.1,3.9,Chase Field,N/A,0,0
+2025-04-26,San Diego Padres,Tampa Bay Rays,0.33,0.42,0.34,0.32,0.41,0.33,3.5,3.8,4.1,3.9,Petco Park,N/A,0,0
+2025-04-26,Los Angeles Dodgers,Pittsburgh Pirates,0.33,0.42,0.34,0.32,0.41,0.33,3.5,3.8,4.1,3.9,Dodger Stadium,N/A,0,0
+2025-04-26,Seattle Mariners,Miami Marlins,0.33,0.42,0.34,0.32,0.41,0.33,3.5,3.8,4.1,3.9,T-Mobile Park,N/A,0,0

@@ -1,31 +1,43 @@
-openapi: 3.0.0
+openapi: 3.0.1
 info:
-  title: GPT-SANPRO
-  version: "1.0"
-  description: API de apuestas deportivas inteligentes
+  title: SAMPRO API
+  description: API para generación de parleys, clasificación por nivel y evaluación predictiva.
+  version: "1.0.0"
 servers:
-  - url: https://gpt-sanpro-clean.onrender.com
-
+  - url: https://gpt-sampro-clean.onrender.com
 paths:
-  /parley_seguro_vida_json:
+  /parleys_por_nivel:
     get:
-      summary: Devuelve json con el parley seguro
+      summary: Obtener parleys clasificados por nivel
       responses:
         '200':
-          description: Lista de parlays
-
-  /prediccion:
+          description: Lista de parleys
+  /evaluacion:
     get:
-      summary: Predicción con goles simulados
-      parameters:
-        - name: goles_local
-          in: query
-          schema:
-            type: number
-        - name: goles_visita
-          in: query
-          schema:
-            type: number
+      summary: Obtener evaluación predictiva diaria
       responses:
         '200':
-          description: Probabilidades calculadas
+          description: Resumen con ROI, aciertos, etc.
+  /predict:
+    post:
+      summary: Predecir ganador basado en métricas sabermétricas
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                obp_diff:
+                  type: number
+                slg_diff:
+                  type: number
+                era_diff:
+                  type: number
+                fip_diff:
+                  type: number
+                equipo_local:
+                  type: string
+      responses:
+        '200':
+          description: Resultado de predicción
